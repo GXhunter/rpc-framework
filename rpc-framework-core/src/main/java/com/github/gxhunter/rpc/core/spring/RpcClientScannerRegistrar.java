@@ -1,7 +1,7 @@
 package com.github.gxhunter.rpc.core.spring;
 
 import com.github.gxhunter.rpc.common.annotation.RpcClient;
-import com.github.gxhunter.rpc.common.extension.SpiUtil;
+import com.github.gxhunter.rpc.common.extension.SPIFactory;
 import com.github.gxhunter.rpc.core.annotation.EnableRpcServices;
 import com.github.gxhunter.rpc.core.remoting.transport.RpcRequestTransport;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ import org.springframework.util.ClassUtils;
  * scan and filter specified annotations
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 @Slf4j
 public class RpcClientScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
@@ -91,7 +91,7 @@ public class RpcClientScannerRegistrar implements ImportBeanDefinitionRegistrar,
         Class clazz = ClassUtils.resolveClassName(className, null);
         RpcClientFactoryBean factoryBean = new RpcClientFactoryBean();
         factoryBean.setType(clazz);
-        factoryBean.setRpcRequestTransport(SpiUtil.getInstance(RpcRequestTransport.class));
+        factoryBean.setRpcRequestTransport(SPIFactory.getInstance(RpcRequestTransport.class));
         AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder.genericBeanDefinition(clazz, factoryBean::getObject)
                 .setPrimary(attributes.getBoolean("primary"))
                 .setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE)

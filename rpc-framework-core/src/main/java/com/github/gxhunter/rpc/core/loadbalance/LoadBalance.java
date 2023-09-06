@@ -1,7 +1,7 @@
 package com.github.gxhunter.rpc.core.loadbalance;
 
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
 import com.github.gxhunter.rpc.common.extension.SPI;
+import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
  * Interface to the load balancing policy
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 @SPI
 public interface LoadBalance {

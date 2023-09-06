@@ -4,7 +4,7 @@ package com.github.gxhunter.rpc.core.provider;
  * store and provide service object.
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 public interface ServiceProvider {
 

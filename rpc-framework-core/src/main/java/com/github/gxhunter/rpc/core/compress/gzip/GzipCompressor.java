@@ -1,6 +1,6 @@
 package com.github.gxhunter.rpc.core.compress.gzip;
 
-import com.github.gxhunter.rpc.core.compress.Compress;
+import com.github.gxhunter.rpc.core.compress.Compressor;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,13 +10,10 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 
-public class GzipCompress implements Compress {
-
-
-    private static final int BUFFER_SIZE = 1024 * 4;
+public class GzipCompressor implements Compressor {
 
     @Override
     public byte[] compress(byte[] bytes) {
@@ -40,10 +37,11 @@ public class GzipCompress implements Compress {
             throw new NullPointerException("bytes is null");
         }
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-             GZIPInputStream gunzip = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
-            byte[] buffer = new byte[BUFFER_SIZE];
+             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+             GZIPInputStream gunzip = new GZIPInputStream(in)) {
+            byte[] buffer = new byte[1024 * 4];
             int n;
-            while ((n = gunzip.read(buffer)) > -1) {
+            while ((n = gunzip.read(buffer)) != -1) {
                 out.write(buffer, 0, n);
             }
             return out.toByteArray();

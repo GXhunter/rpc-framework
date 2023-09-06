@@ -6,7 +6,6 @@ import com.github.gxhunter.rpc.common.exception.RpcException;
 import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
 import com.github.gxhunter.rpc.core.remoting.dto.RpcResponse;
 import com.github.gxhunter.rpc.core.remoting.transport.RpcRequestTransport;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.FactoryBean;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Setter
-@Getter
 public class RpcClientFactoryBean implements FactoryBean<Object>, InvocationHandler {
     private static final String INTERFACE_NAME = "interfaceName";
     private Class<?> type;
@@ -49,8 +47,11 @@ public class RpcClientFactoryBean implements FactoryBean<Object>, InvocationHand
                 .paramTypes(method.getParameterTypes())
                 .requestId(UUID.randomUUID().toString())
                 .build();
-        log.info("调用远程方法\t{}({})", rpcRequest.getInterfaceName(), Arrays.stream(rpcRequest.getParamTypes()).map(e -> e.getName() + ".class").collect(Collectors.joining(",")));
-        CompletableFuture<RpcResponse<Object>> completableFuture = (CompletableFuture<RpcResponse<Object>>) rpcRequestTransport.sendRpcRequest(rpcRequest);
+        log.debug("--------------------------");
+        log.debug("调用远程方法\t{}({})", rpcRequest.getInterfaceName(),
+                Arrays.stream(rpcRequest.getParamTypes()).map(e -> e.getName() + ".class").collect(Collectors.joining(",")));
+        log.debug("--------------------------");
+        CompletableFuture<RpcResponse<Object>> completableFuture = rpcRequestTransport.sendRpcRequest(rpcRequest);
         RpcResponse<Object> rpcResponse = completableFuture.get();
         this.check(rpcResponse, rpcRequest);
         return rpcResponse.getData();

@@ -1,6 +1,6 @@
 package com.github.gxhunter.rpc.core.loadbalance.loadbalancer;
 
-import com.github.gxhunter.rpc.common.extension.SpiUtil;
+import com.github.gxhunter.rpc.common.extension.SPIFactory;
 import com.github.gxhunter.rpc.core.DemoRpcService;
 import com.github.gxhunter.rpc.core.DemoRpcServiceImpl;
 import com.github.gxhunter.rpc.core.loadbalance.LoadBalance;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 class ConsistentHashLoadBalanceTest {
     @Test
     void TestConsistentHashLoadBalance() {
-        LoadBalance loadBalance = SpiUtil.getInstance(LoadBalance.class);
+        LoadBalance loadBalance = SPIFactory.getInstance(LoadBalance.class);
         List<String> serviceUrlList = new ArrayList<>(Arrays.asList("127.0.0.1:9997", "127.0.0.1:9998", "127.0.0.1:9999"));
 
         DemoRpcService demoRpcService = new DemoRpcServiceImpl();

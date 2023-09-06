@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * 参考feign实现
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

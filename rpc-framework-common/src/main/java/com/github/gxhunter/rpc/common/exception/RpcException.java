@@ -4,7 +4,7 @@ import com.github.gxhunter.rpc.common.enums.RpcErrorMessageEnum;
 
 /**
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 public class RpcException extends RuntimeException {
     public RpcException(RpcErrorMessageEnum rpcErrorMessageEnum, String detail) {

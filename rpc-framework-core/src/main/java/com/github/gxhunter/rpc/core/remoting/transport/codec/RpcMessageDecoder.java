@@ -2,8 +2,8 @@ package com.github.gxhunter.rpc.core.remoting.transport.codec;
 
 import com.github.gxhunter.rpc.common.enums.CompressTypeEnum;
 import com.github.gxhunter.rpc.common.enums.SerializationTypeEnum;
-import com.github.gxhunter.rpc.common.extension.SpiUtil;
-import com.github.gxhunter.rpc.core.compress.Compress;
+import com.github.gxhunter.rpc.common.extension.SPIFactory;
+import com.github.gxhunter.rpc.core.compress.Compressor;
 import com.github.gxhunter.rpc.core.remoting.constants.RpcConstants;
 import com.github.gxhunter.rpc.core.remoting.dto.RpcMessage;
 import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
@@ -37,7 +37,7 @@ import java.util.Arrays;
  * </p>
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  * @see <a href="https://zhuanlan.zhihu.com/p/95621344">LengthFieldBasedFrameDecoder解码器</a>
  */
 @Slf4j
@@ -105,12 +105,12 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
                         frame.readBytes(bs);
                         // decompress the bytes
                         String compressName = CompressTypeEnum.getName(compressType);
-                        Compress compress = SpiUtil.getInstance(Compress.class);
-                        bs = compress.decompress(bs);
+                        Compressor compressor = SPIFactory.getInstance(Compressor.class);
+                        bs = compressor.decompress(bs);
                         // deserialize the object
                         String codecName = SerializationTypeEnum.getName(rpcMessage.getCodec());
                         log.info("codec name: [{}] ", codecName);
-                        Serializer serializer = SpiUtil.getInstance(Serializer.class);
+                        Serializer serializer = SPIFactory.getInstance(Serializer.class);
                         if (messageType == RpcConstants.REQUEST_TYPE) {
                             RpcRequest tmpValue = serializer.deserialize(bs, RpcRequest.class);
                             rpcMessage.setData(tmpValue);

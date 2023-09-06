@@ -2,16 +2,20 @@ package com.github.gxhunter.rpc.common.extension;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class SpiUtil {
-    public static <S> S getInstance(Class<S> type) {
-        if (type == null) {
-            throw new IllegalArgumentException("类型不能为空");
+public final class SPIFactory {
+    private static final Map<Class<?>, Object> MAP = new ConcurrentHashMap<>();
+    public static <S> S getInstance(@NonNull Class<S> type) {
+        if (MAP.containsKey(type)) {
+            return (S) MAP.get(type);
         }
         if (!type.isInterface()) {
             throw new IllegalArgumentException("只能通过接口获取spi实现");
@@ -20,7 +24,11 @@ public final class SpiUtil {
             throw new IllegalArgumentException("只能获取添加@SPI注解的实现");
         }
         ServiceLoader<S> serviceLoader = ServiceLoader.load(type);
-        return serviceLoader.iterator().next();
+        for (S item : serviceLoader) {
+            MAP.putIfAbsent(type, item);
+            return item;
+        }
+        return null;
     }
 
 }

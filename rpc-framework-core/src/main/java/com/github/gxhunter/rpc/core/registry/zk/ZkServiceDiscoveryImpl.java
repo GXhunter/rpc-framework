@@ -2,7 +2,7 @@ package com.github.gxhunter.rpc.core.registry.zk;
 
 import com.github.gxhunter.rpc.common.enums.RpcErrorMessageEnum;
 import com.github.gxhunter.rpc.common.exception.RpcException;
-import com.github.gxhunter.rpc.common.extension.SpiUtil;
+import com.github.gxhunter.rpc.common.extension.SPIFactory;
 import com.github.gxhunter.rpc.common.factory.SingletonFactory;
 import com.github.gxhunter.rpc.core.loadbalance.LoadBalance;
 import com.github.gxhunter.rpc.core.registry.ServiceDiscovery;
@@ -16,14 +16,14 @@ import java.util.List;
  * service discovery based on zookeeper
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 @Slf4j
 public class ZkServiceDiscoveryImpl implements ServiceDiscovery {
     private final LoadBalance loadBalance;
 
     public ZkServiceDiscoveryImpl() {
-        this.loadBalance = SpiUtil.getInstance(LoadBalance.class);
+        this.loadBalance = SPIFactory.getInstance(LoadBalance.class);
     }
 
     @Override

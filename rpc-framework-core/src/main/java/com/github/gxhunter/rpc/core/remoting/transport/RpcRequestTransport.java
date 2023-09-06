@@ -1,21 +1,23 @@
 package com.github.gxhunter.rpc.core.remoting.transport;
 
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
 import com.github.gxhunter.rpc.common.extension.SPI;
+import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
+import com.github.gxhunter.rpc.core.remoting.dto.RpcResponse;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * send RpcRequest。
  *
  * @author hunter
- * @createTime 2023年9月11日
  */
 @SPI
 public interface RpcRequestTransport {
     /**
      * 发送rpc请求
      *
-     * @param rpcRequest message body
-     * @return data from server
+     * @param rpcRequest 请求数据
+     * @return 响应结果
      */
-    Object sendRpcRequest(RpcRequest rpcRequest);
+    CompletableFuture<RpcResponse<Object>> sendRpcRequest(RpcRequest rpcRequest);
 }

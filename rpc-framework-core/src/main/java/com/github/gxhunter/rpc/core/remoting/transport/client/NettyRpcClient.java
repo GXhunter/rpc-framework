@@ -3,7 +3,7 @@ package com.github.gxhunter.rpc.core.remoting.transport.client;
 
 import com.github.gxhunter.rpc.common.enums.CompressTypeEnum;
 import com.github.gxhunter.rpc.common.enums.SerializationTypeEnum;
-import com.github.gxhunter.rpc.common.extension.SpiUtil;
+import com.github.gxhunter.rpc.common.extension.SPIFactory;
 import com.github.gxhunter.rpc.common.factory.SingletonFactory;
 import com.github.gxhunter.rpc.core.registry.ServiceDiscovery;
 import com.github.gxhunter.rpc.core.remoting.constants.RpcConstants;
@@ -36,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public final class NettyRpcClient implements RpcRequestTransport ,AutoCloseable{
     private final ServiceDiscovery serviceDiscovery;
-    private final UnprocessedRequests unprocessedRequests;
     private final ChannelProvider channelProvider;
     private final Bootstrap bootstrap;
     private final EventLoopGroup eventLoopGroup;
@@ -61,13 +60,12 @@ public final class NettyRpcClient implements RpcRequestTransport ,AutoCloseable{
                         p.addLast(new NettyRpcClientHandler());
                     }
                 });
-        this.serviceDiscovery = SpiUtil.getInstance(ServiceDiscovery.class);
-        this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
+        this.serviceDiscovery = SPIFactory.getInstance(ServiceDiscovery.class);
         this.channelProvider = SingletonFactory.getInstance(ChannelProvider.class);
     }
 
     /**
-     * connect server and get the channel ,so that you can send rpc message to server
+     * 连接服务端，并获取channel
      *
      * @param inetSocketAddress server address
      * @return the channel
@@ -80,40 +78,36 @@ public final class NettyRpcClient implements RpcRequestTransport ,AutoCloseable{
                 log.info("The client has connected [{}] successful!", inetSocketAddress.toString());
                 completableFuture.complete(future.channel());
             } else {
-                throw new RuntimeException(future.cause());
+                throw new IllegalStateException(future.cause());
             }
         });
         return completableFuture.get();
     }
 
+    @SneakyThrows
     @Override
-    public Object sendRpcRequest(RpcRequest rpcRequest) {
-        // build return value
+    public CompletableFuture<RpcResponse<Object>> sendRpcRequest(RpcRequest rpcRequest) {
         CompletableFuture<RpcResponse<Object>> resultFuture = new CompletableFuture<>();
-        // get server address
         InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest);
-        // get  server address related channel
         Channel channel = getChannel(inetSocketAddress);
         if (channel.isActive()) {
-            // put unprocessed request
-            unprocessedRequests.put(rpcRequest.getRequestId(), resultFuture);
-            RpcMessage rpcMessage = RpcMessage.builder().data(rpcRequest)
+            // 放置未处理的请求
+            RpcConstants.UNPROCESSED_RESPONSE_FUTURES_HOLDER.put(rpcRequest.getRequestId(), resultFuture);
+            RpcMessage rpcMessage = RpcMessage.builder()
+                    .data(rpcRequest)
                     .codec(SerializationTypeEnum.KYRO.getCode())
                     .compress(CompressTypeEnum.GZIP.getCode())
                     .messageType(RpcConstants.REQUEST_TYPE).build();
             channel.writeAndFlush(rpcMessage).addListener((ChannelFutureListener) future -> {
-                if (future.isSuccess()) {
-                    log.info("client send message: [{}]", rpcMessage);
-                } else {
+                if (!future.isSuccess()) {
                     future.channel().close();
                     resultFuture.completeExceptionally(future.cause());
-                    log.error("Send failed:", future.cause());
+                    log.error("请求失败", future.cause());
                 }
             });
         } else {
             throw new IllegalStateException();
         }
-
         return resultFuture;
     }
 

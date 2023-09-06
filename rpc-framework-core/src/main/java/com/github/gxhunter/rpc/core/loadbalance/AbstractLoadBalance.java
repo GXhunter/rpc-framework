@@ -8,7 +8,7 @@ import java.util.List;
  * Abstract class for a load balancing policy
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 public abstract class AbstractLoadBalance implements LoadBalance {
     @Override

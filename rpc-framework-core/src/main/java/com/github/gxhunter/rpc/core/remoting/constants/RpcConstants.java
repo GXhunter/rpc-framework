@@ -1,17 +1,17 @@
 package com.github.gxhunter.rpc.core.remoting.constants;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import com.github.gxhunter.rpc.core.remoting.dto.RpcResponse;
+
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 public class RpcConstants {
-
-
     public static final byte[] MAGIC_NUMBER = {'g', 'r', 'p', 'c'};
-    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     //版本信息
     public static final byte VERSION = 1;
     public static final byte TOTAL_LENGTH = 16;
@@ -27,6 +27,19 @@ public class RpcConstants {
     public static final int HEAD_LENGTH = 16;
     public static final String PING = "ping";
     public static final String PONG = "pong";
+    /**
+     * 最大传输数据8MB
+     */
     public static final int MAX_FRAME_LENGTH = 8 * 1024 * 1024;
+
+    /**
+     * 服务端口
+     */
+    public static final int SERVER_PORT = 9998;
+
+    /**
+     * 未处理的响应
+     */
+    public static final Map<String, CompletableFuture<RpcResponse<Object>>> UNPROCESSED_RESPONSE_FUTURES_HOLDER = new ConcurrentHashMap<>();
 
 }

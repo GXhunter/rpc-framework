@@ -1,9 +1,9 @@
 package com.github.gxhunter.rpc.core.spring;
 
+import com.github.gxhunter.rpc.common.annotation.RpcService;
+import com.github.gxhunter.rpc.common.factory.SingletonFactory;
 import com.github.gxhunter.rpc.core.provider.ServiceProvider;
 import com.github.gxhunter.rpc.core.provider.impl.ZkServiceProviderImpl;
-import com.github.gxhunter.rpc.common.factory.SingletonFactory;
-import com.github.gxhunter.rpc.common.annotation.RpcService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * call this method before creating the bean to see if the class is annotated
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 @Slf4j
 @Component

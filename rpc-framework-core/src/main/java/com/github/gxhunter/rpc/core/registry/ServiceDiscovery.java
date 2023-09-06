@@ -1,7 +1,7 @@
 package com.github.gxhunter.rpc.core.registry;
 
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
 import com.github.gxhunter.rpc.common.extension.SPI;
+import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
 
 import java.net.InetSocketAddress;
 
@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
  * service discovery
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 @SPI
 public interface ServiceDiscovery {

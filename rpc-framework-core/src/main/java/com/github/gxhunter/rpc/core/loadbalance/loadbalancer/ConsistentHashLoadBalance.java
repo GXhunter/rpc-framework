@@ -1,7 +1,7 @@
 package com.github.gxhunter.rpc.core.loadbalance.loadbalancer;
 
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
 import com.github.gxhunter.rpc.core.loadbalance.AbstractLoadBalance;
+import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * refer to dubbo consistent hash load balance: https://github.com/apache/dubbo/blob/2d9583adf26a2d8bd6fb646243a9fe80a77e65d5/dubbo-cluster/src/main/java/org/apache/dubbo/rpc/cluster/loadbalance/ConsistentHashLoadBalance.java
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 @Slf4j
 public class ConsistentHashLoadBalance extends AbstractLoadBalance {

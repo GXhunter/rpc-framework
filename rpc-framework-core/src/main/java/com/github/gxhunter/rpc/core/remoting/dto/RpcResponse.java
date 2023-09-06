@@ -1,18 +1,13 @@
 package com.github.gxhunter.rpc.core.remoting.dto;
 
 import com.github.gxhunter.rpc.common.enums.RpcResponseCodeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 
 /**
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 @AllArgsConstructor
 @NoArgsConstructor

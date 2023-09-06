@@ -8,7 +8,7 @@ import java.net.InetSocketAddress;
  * service registration
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 @SPI
 public interface ServiceRegistry {

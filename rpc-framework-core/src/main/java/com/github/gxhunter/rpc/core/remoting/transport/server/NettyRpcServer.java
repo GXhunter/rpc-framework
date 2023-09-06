@@ -1,15 +1,11 @@
 package com.github.gxhunter.rpc.core.remoting.transport.server;
 
 import com.github.gxhunter.rpc.common.utils.ThreadPoolFactoryUtil;
-import com.github.gxhunter.rpc.core.config.CustomShutdownHook;
+import com.github.gxhunter.rpc.core.remoting.constants.RpcConstants;
 import com.github.gxhunter.rpc.core.remoting.transport.codec.RpcMessageDecoder;
 import com.github.gxhunter.rpc.core.remoting.transport.codec.RpcMessageEncoder;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -29,17 +25,15 @@ import java.util.concurrent.TimeUnit;
  * and then return the result to the client.
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 @Slf4j
 @Component
 public class NettyRpcServer {
 
-    public static final int PORT = 9998;
 
     @SneakyThrows
     public void start() {
-        CustomShutdownHook.clearAll();
         String host = InetAddress.getLocalHost().getHostAddress();
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -72,7 +66,7 @@ public class NettyRpcServer {
                     });
 
             // 绑定端口，同步等待绑定成功
-            ChannelFuture f = b.bind(host, PORT).sync();
+            ChannelFuture f = b.bind(host, RpcConstants.SERVER_PORT).sync();
             // 等待服务端监听端口关闭
             f.channel().closeFuture().sync();
         } catch (InterruptedException e) {

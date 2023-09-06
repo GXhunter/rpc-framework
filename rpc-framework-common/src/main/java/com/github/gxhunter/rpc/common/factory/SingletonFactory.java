@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  * 获取单例对象的工厂类
  *
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SingletonFactory {
@@ -25,7 +25,7 @@ public final class SingletonFactory {
         }
         String key = c.toString();
         if (!OBJECT_MAP.containsKey(key)) {
-            synchronized (c) {
+            synchronized (key) {
                 if (!OBJECT_MAP.containsKey(key)) {
                     OBJECT_MAP.put(key, supplier.get());
                 }

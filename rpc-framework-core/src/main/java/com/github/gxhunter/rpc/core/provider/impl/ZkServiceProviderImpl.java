@@ -2,10 +2,10 @@ package com.github.gxhunter.rpc.core.provider.impl;
 
 import com.github.gxhunter.rpc.common.enums.RpcErrorMessageEnum;
 import com.github.gxhunter.rpc.common.exception.RpcException;
-import com.github.gxhunter.rpc.common.extension.SpiUtil;
+import com.github.gxhunter.rpc.common.extension.SPIFactory;
 import com.github.gxhunter.rpc.core.provider.ServiceProvider;
 import com.github.gxhunter.rpc.core.registry.ServiceRegistry;
-import com.github.gxhunter.rpc.core.remoting.transport.server.NettyRpcServer;
+import com.github.gxhunter.rpc.core.remoting.constants.RpcConstants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author hunter
- * @createTime 2023年9月11日
+ * 
  */
 @Slf4j
 public class ZkServiceProviderImpl implements ServiceProvider {
@@ -33,7 +33,7 @@ public class ZkServiceProviderImpl implements ServiceProvider {
     public ZkServiceProviderImpl() {
         serviceMap = new ConcurrentHashMap<>();
         registeredService = ConcurrentHashMap.newKeySet();
-        serviceRegistry = SpiUtil.getInstance(ServiceRegistry.class);
+        serviceRegistry = SPIFactory.getInstance(ServiceRegistry.class);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ZkServiceProviderImpl implements ServiceProvider {
         try {
             String host = InetAddress.getLocalHost().getHostAddress();
             this.addService(bean);
-            serviceRegistry.registerService(bean.getClass().getInterfaces()[0].getCanonicalName(), new InetSocketAddress(host, NettyRpcServer.PORT));
+            serviceRegistry.registerService(bean.getClass().getInterfaces()[0].getCanonicalName(), new InetSocketAddress(host, RpcConstants.SERVER_PORT));
         } catch (UnknownHostException e) {
             log.error("occur exception when getHostAddress", e);
         }
