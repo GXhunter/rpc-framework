@@ -61,7 +61,7 @@ public class ZkServiceProviderImpl implements ServiceProvider {
         try {
             String host = InetAddress.getLocalHost().getHostAddress();
             this.addService(bean);
-            serviceRegistry.registerService(bean.getClass().getInterfaces()[0].getCanonicalName(), new InetSocketAddress(host, RpcConstants.SERVER_PORT));
+            serviceRegistry.register(bean.getClass().getInterfaces()[0].getCanonicalName(), new InetSocketAddress(host, RpcConstants.SERVER_PORT));
         } catch (UnknownHostException e) {
             log.error("occur exception when getHostAddress", e);
         }

@@ -20,5 +20,5 @@ public interface LoadBalance {
      * @param rpcRequest
      * @return target service address
      */
-    String selectServiceAddress(List<String> serviceUrlList, RpcRequest rpcRequest);
+    String choose(List<String> serviceUrlList, RpcRequest rpcRequest);
 }

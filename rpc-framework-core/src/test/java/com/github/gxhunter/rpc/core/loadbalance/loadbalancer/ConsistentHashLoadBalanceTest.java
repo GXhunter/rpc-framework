@@ -28,7 +28,7 @@ class ConsistentHashLoadBalanceTest {
                 .interfaceName(DemoRpcService.class.getCanonicalName())
                 .requestId(UUID.randomUUID().toString())
                 .build();
-        String userServiceAddress = loadBalance.selectServiceAddress(serviceUrlList, rpcRequest);
+        String userServiceAddress = loadBalance.choose(serviceUrlList, rpcRequest);
         assertEquals("127.0.0.1:9998", userServiceAddress);
     }
 }

@@ -13,10 +13,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 /**
- * service discovery based on zookeeper
- *
  * @author hunter
- * 
  */
 @Slf4j
 public class ZkServiceDiscoveryImpl implements ServiceDiscovery {
@@ -31,11 +28,11 @@ public class ZkServiceDiscoveryImpl implements ServiceDiscovery {
         String rpcServiceName = rpcRequest.getRpcServiceName();
         ZookeeperOperator zookeeperOperator = SingletonFactory.getInstance(ZookeeperOperator.class);
         List<String> serviceUrlList = zookeeperOperator.getChildrenNodes(rpcServiceName);
-        if (serviceUrlList==null||serviceUrlList.isEmpty()) {
+        if (serviceUrlList == null || serviceUrlList.isEmpty()) {
             throw new RpcException(RpcErrorMessageEnum.SERVICE_CAN_NOT_BE_FOUND, rpcServiceName);
         }
         // load balancing
-        String targetServiceUrl = loadBalance.selectServiceAddress(serviceUrlList, rpcRequest);
+        String targetServiceUrl = loadBalance.choose(serviceUrlList, rpcRequest);
         log.info("Successfully found the service address:[{}]", targetServiceUrl);
         String[] socketAddressArray = targetServiceUrl.split(":");
         String host = socketAddressArray[0];

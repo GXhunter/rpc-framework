@@ -86,6 +86,20 @@ public final class ZookeeperOperator {
             log.error("create persistent node for path [{}] fail", path);
         }
     }
+    public void deletePersistentNode(String path) {
+        try {
+            if (REGISTERED_PATH_SET.contains(path)) {
+                //eg: /my-rpc/github.javaguide.HelloService/127.0.0.1:9999
+                zkClient.delete().deletingChildrenIfNeeded().forPath(path);
+                log.info("The node was created successfully. The node is:[{}]", path);
+            } else {
+                log.info("The node already deleted. The node is:[{}]", path);
+            }
+            REGISTERED_PATH_SET.remove(path);
+        } catch (Exception e) {
+            log.error("create persistent node for path [{}] fail", path);
+        }
+    }
 
     /**
      * Gets the children under a node

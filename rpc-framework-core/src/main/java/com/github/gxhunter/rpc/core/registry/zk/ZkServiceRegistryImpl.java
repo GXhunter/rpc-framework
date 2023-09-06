@@ -14,10 +14,16 @@ import java.net.InetSocketAddress;
  */
 @Slf4j
 public class ZkServiceRegistryImpl implements ServiceRegistry {
-
+    private final ZookeeperOperator mZookeeperOperator = SingletonFactory.getInstance(ZookeeperOperator.class);
     @Override
-    public void registerService(String rpcServiceName, InetSocketAddress inetSocketAddress) {
+    public void register(String rpcServiceName, InetSocketAddress inetSocketAddress) {
         String servicePath = ZookeeperOperator.ZK_REGISTER_ROOT_PATH + "/" + rpcServiceName + inetSocketAddress.toString();
-        SingletonFactory.getInstance(ZookeeperOperator.class).createPersistentNode(servicePath);
+        mZookeeperOperator.createPersistentNode(servicePath);
     }
+    @Override
+    public void deregister(String rpcServiceName, InetSocketAddress inetSocketAddress) {
+        String servicePath = ZookeeperOperator.ZK_REGISTER_ROOT_PATH + "/" + rpcServiceName + inetSocketAddress.toString();
+        mZookeeperOperator.deletePersistentNode(servicePath);
+    }
+
 }
