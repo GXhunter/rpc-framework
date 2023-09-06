@@ -1,6 +1,6 @@
 package com.github.gxhunter.rpc.core.serialize.kyro;
 
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
+import com.github.gxhunter.rpc.core.dto.RpcRequest;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

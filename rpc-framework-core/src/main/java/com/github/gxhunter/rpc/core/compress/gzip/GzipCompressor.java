@@ -1,6 +1,7 @@
 package com.github.gxhunter.rpc.core.compress.gzip;
 
 import com.github.gxhunter.rpc.core.compress.Compressor;
+import lombok.NonNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,16 +11,12 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * @author hunter
- * 
  */
 
 public class GzipCompressor implements Compressor {
 
     @Override
-    public byte[] compress(byte[] bytes) {
-        if (bytes == null) {
-            throw new NullPointerException("bytes is null");
-        }
+    public byte[] compress(byte @NonNull [] bytes) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              GZIPOutputStream gzip = new GZIPOutputStream(out)) {
             gzip.write(bytes);
@@ -32,10 +29,7 @@ public class GzipCompressor implements Compressor {
     }
 
     @Override
-    public byte[] decompress(byte[] bytes) {
-        if (bytes == null) {
-            throw new NullPointerException("bytes is null");
-        }
+    public byte[] decompress(byte @NonNull [] bytes) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              ByteArrayInputStream in = new ByteArrayInputStream(bytes);
              GZIPInputStream gunzip = new GZIPInputStream(in)) {

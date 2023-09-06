@@ -1,7 +1,7 @@
 package com.github.gxhunter.rpc.core.loadbalance.impl;
 
+import com.github.gxhunter.rpc.core.dto.RpcRequest;
 import com.github.gxhunter.rpc.core.loadbalance.LoadBalance;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;

@@ -1,4 +1,4 @@
-package com.github.gxhunter.rpc.core.remoting.transport.client;
+package com.github.gxhunter.rpc.core.client;
 
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;

@@ -13,7 +13,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SPIFactory {
     private static final Map<Class<?>, Object> MAP = new ConcurrentHashMap<>();
+
     public static <S> S getInstance(@NonNull Class<S> type) {
+        return getInstance(type, null);
+    }
+    public static <S> S getInstance(@NonNull Class<S> type, String canonicalName) {
         if (MAP.containsKey(type)) {
             return (S) MAP.get(type);
         }
@@ -25,10 +29,12 @@ public final class SPIFactory {
         }
         ServiceLoader<S> serviceLoader = ServiceLoader.load(type);
         for (S item : serviceLoader) {
-            MAP.putIfAbsent(type, item);
-            return item;
+            if (canonicalName == null || item.getClass().getCanonicalName().equals(canonicalName)) {
+                MAP.putIfAbsent(type, item);
+                return item;
+            }
         }
-        return null;
+        throw new IllegalStateException("找不到"+canonicalName+"对应实现");
     }
 
 }

@@ -3,9 +3,9 @@ package com.github.gxhunter.rpc.core.provider.impl;
 import com.github.gxhunter.rpc.common.enums.RpcErrorMessageEnum;
 import com.github.gxhunter.rpc.common.exception.RpcException;
 import com.github.gxhunter.rpc.common.extension.SPIFactory;
+import com.github.gxhunter.rpc.core.RpcConstants;
 import com.github.gxhunter.rpc.core.provider.ServiceProvider;
 import com.github.gxhunter.rpc.core.registry.ServiceRegistry;
-import com.github.gxhunter.rpc.core.remoting.constants.RpcConstants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;

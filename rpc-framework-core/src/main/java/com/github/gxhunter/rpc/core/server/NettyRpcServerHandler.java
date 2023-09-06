@@ -1,14 +1,16 @@
-package com.github.gxhunter.rpc.core.remoting.transport.server;
+package com.github.gxhunter.rpc.core.server;
 
 import com.github.gxhunter.rpc.common.enums.CompressTypeEnum;
 import com.github.gxhunter.rpc.common.enums.RpcResponseCodeEnum;
 import com.github.gxhunter.rpc.common.enums.SerializationTypeEnum;
+import com.github.gxhunter.rpc.common.exception.RpcException;
 import com.github.gxhunter.rpc.common.factory.SingletonFactory;
-import com.github.gxhunter.rpc.core.remoting.constants.RpcConstants;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcMessage;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcResponse;
-import com.github.gxhunter.rpc.core.remoting.handler.RpcRequestHandler;
+import com.github.gxhunter.rpc.core.RpcConstants;
+import com.github.gxhunter.rpc.core.dto.RpcMessage;
+import com.github.gxhunter.rpc.core.dto.RpcRequest;
+import com.github.gxhunter.rpc.core.dto.RpcResponse;
+import com.github.gxhunter.rpc.core.provider.ServiceProvider;
+import com.github.gxhunter.rpc.core.provider.impl.ZkServiceProviderImpl;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -17,6 +19,9 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Customize the ChannelHandler of the server to process the data sent by the client.
@@ -29,11 +34,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
-
-    private final RpcRequestHandler rpcRequestHandler;
+    private final ServiceProvider serviceProvider;
 
     public NettyRpcServerHandler() {
-        this.rpcRequestHandler = SingletonFactory.getInstance(RpcRequestHandler.class);
+        serviceProvider = SingletonFactory.getInstance(ZkServiceProviderImpl.class);
     }
 
     @Override
@@ -51,7 +55,7 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
                 } else {
                     RpcRequest rpcRequest = (RpcRequest) ((RpcMessage) msg).getData();
                     // Execute the target method (the method the client needs to execute) and return the method result
-                    Object result = rpcRequestHandler.handle(rpcRequest);
+                    Object result = handle(rpcRequest);
                     log.info("服务端执行结果:{}",result);
                     rpcMessage.setMessageType(RpcConstants.RESPONSE_TYPE);
                     if (ctx.channel().isActive() && ctx.channel().isWritable()) {
@@ -89,5 +93,21 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
         log.error("server catch exception");
         cause.printStackTrace();
         ctx.close();
+    }
+
+    /**
+     * 处理 rpcRequest：调用相应的方法，返回方法结果
+     */
+    public Object handle(RpcRequest rpcRequest) {
+        Object service = serviceProvider.getService(rpcRequest.getRpcServiceName());
+        Object result;
+        try {
+            Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
+            result = method.invoke(service, rpcRequest.getParameters());
+            log.info("service:[{}] 成功执行方法:[{}]", rpcRequest.getInterfaceName(), rpcRequest.getMethodName());
+        } catch (NoSuchMethodException | IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
+            throw new RpcException(e.getMessage(), e);
+        }
+        return result;
     }
 }

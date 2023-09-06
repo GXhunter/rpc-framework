@@ -1,12 +1,12 @@
-package com.github.gxhunter.rpc.core.remoting.transport.codec;
+package com.github.gxhunter.rpc.core.codec;
 
 
 import com.github.gxhunter.rpc.common.enums.CompressTypeEnum;
 import com.github.gxhunter.rpc.common.enums.SerializationTypeEnum;
 import com.github.gxhunter.rpc.common.extension.SPIFactory;
+import com.github.gxhunter.rpc.core.RpcConstants;
 import com.github.gxhunter.rpc.core.compress.Compressor;
-import com.github.gxhunter.rpc.core.remoting.constants.RpcConstants;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcMessage;
+import com.github.gxhunter.rpc.core.dto.RpcMessage;
 import com.github.gxhunter.rpc.core.serialize.Serializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -59,7 +59,7 @@ public class RpcMessageEncoder extends MessageToByteEncoder<RpcMessage> {
 //            写入序列化器 1字节
             out.writeByte(rpcMessage.getCodec());
 //            写入压缩方式 1字节
-            out.writeByte(CompressTypeEnum.GZIP.getCode());
+            out.writeByte(rpcMessage.getCompress());
 //            写入自增数字 4字节
             out.writeInt(ATOMIC_INTEGER.getAndIncrement());
             // build full length
@@ -74,9 +74,8 @@ public class RpcMessageEncoder extends MessageToByteEncoder<RpcMessage> {
                 Serializer serializer = SPIFactory.getInstance(Serializer.class);
                 bodyBytes = serializer.serialize(rpcMessage.getData());
                 // compress the bytes
-                String compressName = CompressTypeEnum.getName(rpcMessage.getCompress());
-                Compressor compressor = SPIFactory.getInstance(Compressor.class)
-                        ;
+                CompressTypeEnum compressType = CompressTypeEnum.getCompressByCode(rpcMessage.getCompress());
+                Compressor compressor = SPIFactory.getInstance(Compressor.class,compressType.getCanonicalName());
                 bodyBytes = compressor.compress(bodyBytes);
                 fullLength += bodyBytes.length;
             }

@@ -3,7 +3,8 @@ package com.github.gxhunter.rpc.core.spring;
 import com.github.gxhunter.rpc.common.annotation.RpcClient;
 import com.github.gxhunter.rpc.common.extension.SPIFactory;
 import com.github.gxhunter.rpc.core.annotation.EnableRpcServices;
-import com.github.gxhunter.rpc.core.remoting.transport.RpcRequestTransport;
+import com.github.gxhunter.rpc.core.client.RpcClientFactoryBean;
+import com.github.gxhunter.rpc.core.client.RpcRequestExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
@@ -91,7 +92,7 @@ public class RpcClientScannerRegistrar implements ImportBeanDefinitionRegistrar,
         Class clazz = ClassUtils.resolveClassName(className, null);
         RpcClientFactoryBean factoryBean = new RpcClientFactoryBean();
         factoryBean.setType(clazz);
-        factoryBean.setRpcRequestTransport(SPIFactory.getInstance(RpcRequestTransport.class));
+        factoryBean.setMRpcRequestExecutor(SPIFactory.getInstance(RpcRequestExecutor.class));
         AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder.genericBeanDefinition(clazz, factoryBean::getObject)
                 .setPrimary(attributes.getBoolean("primary"))
                 .setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE)

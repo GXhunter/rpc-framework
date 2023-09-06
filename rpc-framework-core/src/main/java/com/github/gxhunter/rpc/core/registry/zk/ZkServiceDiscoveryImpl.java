@@ -4,9 +4,9 @@ import com.github.gxhunter.rpc.common.enums.RpcErrorMessageEnum;
 import com.github.gxhunter.rpc.common.exception.RpcException;
 import com.github.gxhunter.rpc.common.extension.SPIFactory;
 import com.github.gxhunter.rpc.common.factory.SingletonFactory;
+import com.github.gxhunter.rpc.core.dto.RpcRequest;
 import com.github.gxhunter.rpc.core.loadbalance.LoadBalance;
 import com.github.gxhunter.rpc.core.registry.ServiceDiscovery;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;

@@ -4,8 +4,8 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.github.gxhunter.rpc.common.exception.SerializeException;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcResponse;
+import com.github.gxhunter.rpc.core.dto.RpcRequest;
+import com.github.gxhunter.rpc.core.dto.RpcResponse;
 import com.github.gxhunter.rpc.core.serialize.Serializer;
 import lombok.extern.slf4j.Slf4j;
 

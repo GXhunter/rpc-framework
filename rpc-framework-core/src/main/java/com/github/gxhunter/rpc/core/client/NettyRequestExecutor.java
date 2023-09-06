@@ -1,18 +1,17 @@
-package com.github.gxhunter.rpc.core.remoting.transport.client;
+package com.github.gxhunter.rpc.core.client;
 
 
 import com.github.gxhunter.rpc.common.enums.CompressTypeEnum;
 import com.github.gxhunter.rpc.common.enums.SerializationTypeEnum;
 import com.github.gxhunter.rpc.common.extension.SPIFactory;
 import com.github.gxhunter.rpc.common.factory.SingletonFactory;
+import com.github.gxhunter.rpc.core.RpcConstants;
+import com.github.gxhunter.rpc.core.codec.RpcMessageDecoder;
+import com.github.gxhunter.rpc.core.codec.RpcMessageEncoder;
+import com.github.gxhunter.rpc.core.dto.RpcMessage;
+import com.github.gxhunter.rpc.core.dto.RpcRequest;
+import com.github.gxhunter.rpc.core.dto.RpcResponse;
 import com.github.gxhunter.rpc.core.registry.ServiceDiscovery;
-import com.github.gxhunter.rpc.core.remoting.constants.RpcConstants;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcMessage;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcResponse;
-import com.github.gxhunter.rpc.core.remoting.transport.RpcRequestTransport;
-import com.github.gxhunter.rpc.core.remoting.transport.codec.RpcMessageDecoder;
-import com.github.gxhunter.rpc.core.remoting.transport.codec.RpcMessageEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -29,18 +28,18 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * initialize and close Bootstrap object
+ * rpc执行器的netty实现
  *
  * @author hunter
  */
 @Slf4j
-public final class NettyRpcClient implements RpcRequestTransport ,AutoCloseable{
+public final class NettyRequestExecutor implements RpcRequestExecutor, AutoCloseable {
     private final ServiceDiscovery serviceDiscovery;
     private final ChannelProvider channelProvider;
     private final Bootstrap bootstrap;
     private final EventLoopGroup eventLoopGroup;
 
-    public NettyRpcClient() {
+    public NettyRequestExecutor() {
         // 初始化资源，如 EventLoopGroup、Bootstrap
         eventLoopGroup = new NioEventLoopGroup();
         bootstrap = new Bootstrap();
@@ -86,7 +85,7 @@ public final class NettyRpcClient implements RpcRequestTransport ,AutoCloseable{
 
     @SneakyThrows
     @Override
-    public CompletableFuture<RpcResponse<Object>> sendRpcRequest(RpcRequest rpcRequest) {
+    public CompletableFuture<RpcResponse<Object>> sendRequest(RpcRequest rpcRequest) {
         CompletableFuture<RpcResponse<Object>> resultFuture = new CompletableFuture<>();
         InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest);
         Channel channel = getChannel(inetSocketAddress);
@@ -96,7 +95,7 @@ public final class NettyRpcClient implements RpcRequestTransport ,AutoCloseable{
             RpcMessage rpcMessage = RpcMessage.builder()
                     .data(rpcRequest)
                     .codec(SerializationTypeEnum.KYRO.getCode())
-                    .compress(CompressTypeEnum.GZIP.getCode())
+                    .compress(CompressTypeEnum.EMPTY.getCode())
                     .messageType(RpcConstants.REQUEST_TYPE).build();
             channel.writeAndFlush(rpcMessage).addListener((ChannelFutureListener) future -> {
                 if (!future.isSuccess()) {

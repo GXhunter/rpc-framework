@@ -1,1 +1,2 @@
 com.github.gxhunter.rpc.core.compress.gzip.GzipCompressor
+com.github.gxhunter.rpc.core.compress.gzip.EmptyCompressor

@@ -1,6 +1,7 @@
 package com.github.gxhunter.rpc.core.compress;
 
 import com.github.gxhunter.rpc.common.extension.SPI;
+import lombok.NonNull;
 
 /**
  * 压缩器
@@ -17,7 +18,7 @@ public interface Compressor {
      * @param bytes 待压缩
      * @return 压缩后
      */
-    byte[] compress(byte[] bytes);
+    byte[] compress(byte @NonNull [] bytes);
 
 
     /**
@@ -26,5 +27,5 @@ public interface Compressor {
      * @param bytes 压缩后
      * @return 原始流
      */
-    byte[] decompress(byte[] bytes);
+    byte[] decompress(byte @NonNull [] bytes);
 }

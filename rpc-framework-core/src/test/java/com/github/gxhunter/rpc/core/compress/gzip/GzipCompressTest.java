@@ -1,7 +1,7 @@
 package com.github.gxhunter.rpc.core.compress.gzip;
 
 import com.github.gxhunter.rpc.core.compress.Compressor;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
+import com.github.gxhunter.rpc.core.dto.RpcRequest;
 import com.github.gxhunter.rpc.core.serialize.kyro.KryoSerializer;
 import org.junit.jupiter.api.Test;
 

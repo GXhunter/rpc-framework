@@ -1,11 +1,11 @@
-package com.github.gxhunter.rpc.core.remoting.transport.client;
+package com.github.gxhunter.rpc.core.client;
 
 import com.github.gxhunter.rpc.common.enums.CompressTypeEnum;
 import com.github.gxhunter.rpc.common.enums.SerializationTypeEnum;
 import com.github.gxhunter.rpc.common.factory.SingletonFactory;
-import com.github.gxhunter.rpc.core.remoting.constants.RpcConstants;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcMessage;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcResponse;
+import com.github.gxhunter.rpc.core.RpcConstants;
+import com.github.gxhunter.rpc.core.dto.RpcMessage;
+import com.github.gxhunter.rpc.core.dto.RpcResponse;
 import io.netty.channel.*;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
@@ -27,10 +27,10 @@ import java.util.concurrent.CompletableFuture;
  */
 @Slf4j
 public class NettyRpcClientHandler extends ChannelInboundHandlerAdapter {
-    private final NettyRpcClient nettyRpcClient;
+    private final NettyRequestExecutor nettyRpcClient;
 
     public NettyRpcClientHandler() {
-        this.nettyRpcClient = SingletonFactory.getInstance(NettyRpcClient.class);
+        this.nettyRpcClient = SingletonFactory.getInstance(NettyRequestExecutor.class);
     }
 
     /**

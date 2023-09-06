@@ -3,8 +3,8 @@ package com.github.gxhunter.rpc.core.loadbalance.loadbalancer;
 import com.github.gxhunter.rpc.common.extension.SPIFactory;
 import com.github.gxhunter.rpc.core.DemoRpcService;
 import com.github.gxhunter.rpc.core.DemoRpcServiceImpl;
+import com.github.gxhunter.rpc.core.dto.RpcRequest;
 import com.github.gxhunter.rpc.core.loadbalance.LoadBalance;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

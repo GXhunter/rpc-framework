@@ -1,11 +1,10 @@
-package com.github.gxhunter.rpc.core.spring;
+package com.github.gxhunter.rpc.core.client;
 
 import com.github.gxhunter.rpc.common.enums.RpcErrorMessageEnum;
 import com.github.gxhunter.rpc.common.enums.RpcResponseCodeEnum;
 import com.github.gxhunter.rpc.common.exception.RpcException;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcResponse;
-import com.github.gxhunter.rpc.core.remoting.transport.RpcRequestTransport;
+import com.github.gxhunter.rpc.core.dto.RpcRequest;
+import com.github.gxhunter.rpc.core.dto.RpcResponse;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.FactoryBean;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 public class RpcClientFactoryBean implements FactoryBean<Object>, InvocationHandler {
     private static final String INTERFACE_NAME = "interfaceName";
     private Class<?> type;
-    private RpcRequestTransport rpcRequestTransport;
+    private RpcRequestExecutor mRpcRequestExecutor;
 
     @Override
     public Object getObject() {
@@ -35,6 +34,10 @@ public class RpcClientFactoryBean implements FactoryBean<Object>, InvocationHand
         return type;
     }
 
+    /**
+     * 动态代理 @RpcClient 注解对应接口，实现真正的远程调用请求
+     * @see com.github.gxhunter.rpc.common.annotation.RpcClient
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.isDefault() || method.getDeclaringClass() == Object.class) {
@@ -49,9 +52,9 @@ public class RpcClientFactoryBean implements FactoryBean<Object>, InvocationHand
                 .build();
         log.debug("--------------------------");
         log.debug("调用远程方法\t{}({})", rpcRequest.getInterfaceName(),
-                Arrays.stream(rpcRequest.getParamTypes()).map(e -> e.getName() + ".class").collect(Collectors.joining(",")));
+                Arrays.stream(rpcRequest.getParamTypes()).map(e -> e.getCanonicalName() + ".class").collect(Collectors.joining(",")));
         log.debug("--------------------------");
-        CompletableFuture<RpcResponse<Object>> completableFuture = rpcRequestTransport.sendRpcRequest(rpcRequest);
+        CompletableFuture<RpcResponse<Object>> completableFuture = mRpcRequestExecutor.sendRequest(rpcRequest);
         RpcResponse<Object> rpcResponse = completableFuture.get();
         this.check(rpcResponse, rpcRequest);
         return rpcResponse.getData();

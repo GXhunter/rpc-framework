@@ -1,4 +1,4 @@
-package com.github.gxhunter.rpc.core.remoting.dto;
+package com.github.gxhunter.rpc.core.dto;
 
 import lombok.*;
 

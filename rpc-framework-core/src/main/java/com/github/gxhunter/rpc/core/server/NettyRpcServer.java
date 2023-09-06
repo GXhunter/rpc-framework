@@ -1,9 +1,9 @@
-package com.github.gxhunter.rpc.core.remoting.transport.server;
+package com.github.gxhunter.rpc.core.server;
 
 import com.github.gxhunter.rpc.common.utils.ThreadPoolFactoryUtil;
-import com.github.gxhunter.rpc.core.remoting.constants.RpcConstants;
-import com.github.gxhunter.rpc.core.remoting.transport.codec.RpcMessageDecoder;
-import com.github.gxhunter.rpc.core.remoting.transport.codec.RpcMessageEncoder;
+import com.github.gxhunter.rpc.core.RpcConstants;
+import com.github.gxhunter.rpc.core.codec.RpcMessageDecoder;
+import com.github.gxhunter.rpc.core.codec.RpcMessageEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;

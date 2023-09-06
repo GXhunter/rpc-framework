@@ -2,9 +2,9 @@ package com.github.gxhunter.rpc.core.registry;
 
 import com.github.gxhunter.rpc.core.DemoRpcService;
 import com.github.gxhunter.rpc.core.DemoRpcServiceImpl;
+import com.github.gxhunter.rpc.core.dto.RpcRequest;
 import com.github.gxhunter.rpc.core.registry.zk.ZkServiceDiscoveryImpl;
 import com.github.gxhunter.rpc.core.registry.zk.ZkServiceRegistryImpl;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
 import org.junit.jupiter.api.Test;
 
 import java.net.InetSocketAddress;

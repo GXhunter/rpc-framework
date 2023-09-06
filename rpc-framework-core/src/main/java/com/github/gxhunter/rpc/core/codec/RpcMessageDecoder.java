@@ -1,13 +1,13 @@
-package com.github.gxhunter.rpc.core.remoting.transport.codec;
+package com.github.gxhunter.rpc.core.codec;
 
 import com.github.gxhunter.rpc.common.enums.CompressTypeEnum;
 import com.github.gxhunter.rpc.common.enums.SerializationTypeEnum;
 import com.github.gxhunter.rpc.common.extension.SPIFactory;
+import com.github.gxhunter.rpc.core.RpcConstants;
 import com.github.gxhunter.rpc.core.compress.Compressor;
-import com.github.gxhunter.rpc.core.remoting.constants.RpcConstants;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcMessage;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcResponse;
+import com.github.gxhunter.rpc.core.dto.RpcMessage;
+import com.github.gxhunter.rpc.core.dto.RpcRequest;
+import com.github.gxhunter.rpc.core.dto.RpcResponse;
 import com.github.gxhunter.rpc.core.serialize.Serializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -79,7 +79,6 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
                     if (version != RpcConstants.VERSION) {
                         throw new IllegalAccessException("不兼容的版本:" + version);
                     }
-
                     //        读取正文全字节长度
                     int fullLength = frame.readInt();
                     //        消息类型
@@ -104,8 +103,8 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
                         byte[] bs = new byte[bodyLength];
                         frame.readBytes(bs);
                         // decompress the bytes
-                        String compressName = CompressTypeEnum.getName(compressType);
-                        Compressor compressor = SPIFactory.getInstance(Compressor.class);
+                        CompressTypeEnum compress = CompressTypeEnum.getCompressByCode(compressType);
+                        Compressor compressor = SPIFactory.getInstance(Compressor.class,compress.getCanonicalName());
                         bs = compressor.decompress(bs);
                         // deserialize the object
                         String codecName = SerializationTypeEnum.getName(rpcMessage.getCodec());

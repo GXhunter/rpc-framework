@@ -1,7 +1,7 @@
 package com.github.gxhunter.rpc.core.loadbalance;
 
 import com.github.gxhunter.rpc.common.extension.SPI;
-import com.github.gxhunter.rpc.core.remoting.dto.RpcRequest;
+import com.github.gxhunter.rpc.core.dto.RpcRequest;
 
 import java.util.List;
 

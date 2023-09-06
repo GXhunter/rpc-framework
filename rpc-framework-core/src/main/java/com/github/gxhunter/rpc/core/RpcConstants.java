@@ -1,6 +1,6 @@
-package com.github.gxhunter.rpc.core.remoting.constants;
+package com.github.gxhunter.rpc.core;
 
-import com.github.gxhunter.rpc.core.remoting.dto.RpcResponse;
+import com.github.gxhunter.rpc.core.dto.RpcResponse;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
