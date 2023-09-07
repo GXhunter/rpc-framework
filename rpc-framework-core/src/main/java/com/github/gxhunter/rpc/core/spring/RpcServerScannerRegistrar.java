@@ -18,7 +18,7 @@ import java.lang.annotation.Annotation;
  * @author hunter
  */
 @Slf4j
-public class RpcServerScannerRegistrar extends AbstractAnnotationImportBeanDefinitionRegistrar {
+public class RpcServerScannerRegistrar extends AbstractImportBeanDefinitionRegistrar {
     private final ServiceProvider serviceProvider = SingletonFactory.getInstance(ZkServiceProviderImpl.class);
 
     @Override

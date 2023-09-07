@@ -6,7 +6,7 @@ import com.github.gxhunter.rpc.common.utils.ThreadPoolFactoryUtil;
 import com.github.gxhunter.rpc.core.RpcConstants;
 import com.github.gxhunter.rpc.core.annotation.EnableRpcServices;
 import com.github.gxhunter.rpc.core.registry.zk.ZookeeperOperator;
-import com.github.gxhunter.rpc.core.server.NettyRpcServer;
+import com.github.gxhunter.rpc.core.server.IRpcServer;
 import com.github.gxhunter.rpc.core.spring.SpringUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -33,11 +33,10 @@ public class NettyServerMain {
             }
             ThreadPoolFactoryUtil.shutDownAllThreadPool();
         }));
-
         // Register service via annotation
         ConfigurableApplicationContext applicationContext = SpringApplication.run(NettyServerMain.class, args);
         SpringUtil.setContext(applicationContext);
-        NettyRpcServer nettyRpcServer = applicationContext.getBean(NettyRpcServer.class);
-        nettyRpcServer.start();
+        IRpcServer rpcServer = applicationContext.getBean(IRpcServer.class);
+        rpcServer.start();
     }
 }

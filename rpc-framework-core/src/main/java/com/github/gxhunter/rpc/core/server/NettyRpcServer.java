@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-public class NettyRpcServer {
+public class NettyRpcServer implements IRpcServer{
     private final String host;
     private final EventLoopGroup bossGroup;
     private final EventLoopGroup workerGroup;
@@ -42,11 +44,12 @@ public class NettyRpcServer {
         workerGroup = new NioEventLoopGroup();
         serviceHandlerGroup = new DefaultEventExecutorGroup(
                 Runtime.getRuntime().availableProcessors() * 2,
-                ThreadPoolFactoryUtil.createThreadFactory("service-rpc-group", false)
+                ThreadPoolFactoryUtil.createThreadFactory("rpc-server", false)
         );
     }
 
-    public void start() {
+    @Override
+    public Future start() {
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -74,9 +77,10 @@ public class NettyRpcServer {
             // 绑定端口，同步等待绑定成功
             ChannelFuture f = b.bind(host, RpcConstants.SERVER_PORT).sync();
             // 等待服务端监听端口关闭
-            f.channel().closeFuture().sync();
+            return f.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             log.error("occur exception when start server:", e);
+            return CompletableFuture.completedFuture(e.getCause());
         } finally {
             log.error("shutdown bossGroup and workerGroup");
             bossGroup.shutdownGracefully();

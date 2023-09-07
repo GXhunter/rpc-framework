@@ -25,7 +25,7 @@ import java.lang.annotation.Annotation;
  * @author hunter
  */
 @Slf4j
-public class RpcClientScannerRegistrar extends AbstractAnnotationImportBeanDefinitionRegistrar {
+public class RpcClientScannerRegistrar extends AbstractImportBeanDefinitionRegistrar {
     @Override
     public Class<? extends Annotation> getImportBeanAnnotation() {
         return EnableRpcClients.class;

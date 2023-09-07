@@ -20,7 +20,7 @@ import java.lang.annotation.Annotation;
 /**
  * 基于注解的bean扫描装载
  */
-public abstract class AbstractAnnotationImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
+public abstract class AbstractImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
     private ResourceLoader resourceLoader;
     private Environment environment;
 
@@ -57,8 +57,8 @@ public abstract class AbstractAnnotationImportBeanDefinitionRegistrar implements
         ClassPathScanningCandidateComponentProvider scanner =
                 new ClassPathScanningCandidateComponentProvider(false, this.environment) {
                     {
-                        this.setResourceLoader(AbstractAnnotationImportBeanDefinitionRegistrar.this.resourceLoader);
-                        this.addIncludeFilter(new AnnotationTypeFilter(AbstractAnnotationImportBeanDefinitionRegistrar.this.getFilterAnnotation()));
+                        this.setResourceLoader(AbstractImportBeanDefinitionRegistrar.this.resourceLoader);
+                        this.addIncludeFilter(new AnnotationTypeFilter(AbstractImportBeanDefinitionRegistrar.this.getFilterAnnotation()));
                     }
 
                     @Override
