@@ -3,8 +3,6 @@ package com.github.gxhunter.rpc.core.dto;
 import com.github.gxhunter.rpc.common.enums.RpcResponseCodeEnum;
 import lombok.*;
 
-import java.io.Serializable;
-
 /**
  * @author hunter
  * 
@@ -15,9 +13,8 @@ import java.io.Serializable;
 @Setter
 @Builder
 @ToString
-public class RpcResponse<T> implements Serializable {
+public class RpcResponse<T>  {
 
-    private static final long serialVersionUID = 715745410605631233L;
     private String requestId;
     /**
      * response code

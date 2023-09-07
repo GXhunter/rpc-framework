@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 class ConsistentHashLoadBalanceTest {
     @Test
     void TestConsistentHashLoadBalance() {
-        LoadBalance loadBalance = SPIFactory.getInstance(LoadBalance.class);
+        LoadBalance loadBalance = SPIFactory.getImplement(LoadBalance.class);
         List<String> serviceUrlList = new ArrayList<>(Arrays.asList("127.0.0.1:9997", "127.0.0.1:9998", "127.0.0.1:9999"));
 
         DemoRpcService demoRpcService = new DemoRpcServiceImpl();

@@ -104,12 +104,12 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
                         frame.readBytes(bs);
                         // decompress the bytes
                         CompressTypeEnum compress = CompressTypeEnum.getCompressByCode(compressType);
-                        Compressor compressor = SPIFactory.getInstance(Compressor.class,compress.getCanonicalName());
+                        Compressor compressor = SPIFactory.getImplement(Compressor.class,compress.getCanonicalName());
                         bs = compressor.decompress(bs);
                         // deserialize the object
                         String codecName = SerializationTypeEnum.getName(rpcMessage.getCodec());
                         log.info("codec name: [{}] ", codecName);
-                        Serializer serializer = SPIFactory.getInstance(Serializer.class);
+                        Serializer serializer = SPIFactory.getImplement(Serializer.class);
                         if (messageType == RpcConstants.REQUEST_TYPE) {
                             RpcRequest tmpValue = serializer.deserialize(bs, RpcRequest.class);
                             rpcMessage.setData(tmpValue);

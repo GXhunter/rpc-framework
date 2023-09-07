@@ -71,11 +71,11 @@ public class RpcMessageEncoder extends MessageToByteEncoder<RpcMessage> {
                 // serialize the object
                 String codecName = SerializationTypeEnum.getName(rpcMessage.getCodec());
                 log.info("codec name: [{}] ", codecName);
-                Serializer serializer = SPIFactory.getInstance(Serializer.class);
+                Serializer serializer = SPIFactory.getImplement(Serializer.class);
                 bodyBytes = serializer.serialize(rpcMessage.getData());
                 // compress the bytes
                 CompressTypeEnum compressType = CompressTypeEnum.getCompressByCode(rpcMessage.getCompress());
-                Compressor compressor = SPIFactory.getInstance(Compressor.class,compressType.getCanonicalName());
+                Compressor compressor = SPIFactory.getImplement(Compressor.class,compressType.getCanonicalName());
                 bodyBytes = compressor.compress(bodyBytes);
                 fullLength += bodyBytes.length;
             }

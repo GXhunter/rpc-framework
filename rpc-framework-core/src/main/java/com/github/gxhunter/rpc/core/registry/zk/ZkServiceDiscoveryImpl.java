@@ -20,7 +20,7 @@ public class ZkServiceDiscoveryImpl implements ServiceDiscovery {
     private final LoadBalance loadBalance;
 
     public ZkServiceDiscoveryImpl() {
-        this.loadBalance = SPIFactory.getInstance(LoadBalance.class);
+        this.loadBalance = SPIFactory.getImplement(LoadBalance.class);
     }
 
     @Override

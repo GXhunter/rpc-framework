@@ -33,7 +33,7 @@ public class ZkServiceProviderImpl implements ServiceProvider {
     public ZkServiceProviderImpl() {
         serviceMap = new ConcurrentHashMap<>();
         registeredService = ConcurrentHashMap.newKeySet();
-        serviceRegistry = SPIFactory.getInstance(ServiceRegistry.class);
+        serviceRegistry = SPIFactory.getImplement(ServiceRegistry.class);
     }
 
     @Override

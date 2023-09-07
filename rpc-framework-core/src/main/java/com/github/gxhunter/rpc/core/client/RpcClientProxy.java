@@ -5,9 +5,7 @@ import com.github.gxhunter.rpc.common.enums.RpcResponseCodeEnum;
 import com.github.gxhunter.rpc.common.exception.RpcException;
 import com.github.gxhunter.rpc.core.dto.RpcRequest;
 import com.github.gxhunter.rpc.core.dto.RpcResponse;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.FactoryBean;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -17,21 +15,23 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+/**
+ * 动态代理@RpcClient对应的接口，生成实现类
+ * @see com.github.gxhunter.rpc.common.annotation.RpcClient
+ */
 @Slf4j
-@Setter
-public class RpcClientFactoryBean implements FactoryBean<Object>, InvocationHandler {
+public class RpcClientProxy implements InvocationHandler {
     private static final String INTERFACE_NAME = "interfaceName";
-    private Class<?> type;
-    private RpcRequestExecutor mRpcRequestExecutor;
+    private final Class<?> type;
+    private final RpcRequestExecutor rpcRequestExecutor;
 
-    @Override
-    public Object getObject() {
-        return Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, this);
+    public RpcClientProxy(Class<?> type, RpcRequestExecutor rpcRequestExecutor) {
+        this.type = type;
+        this.rpcRequestExecutor = rpcRequestExecutor;
     }
 
-    @Override
-    public Class<?> getObjectType() {
-        return type;
+    public Object getObject() {
+        return Proxy.newProxyInstance(type.getClassLoader(), new Class[]{type}, this);
     }
 
     /**
@@ -46,7 +46,7 @@ public class RpcClientFactoryBean implements FactoryBean<Object>, InvocationHand
         log.info("invoked method: [{}]", method.getName());
         RpcRequest rpcRequest = RpcRequest.builder().methodName(method.getName())
                 .parameters(args)
-                .interfaceName(method.getDeclaringClass().getName())
+                .interfaceName(method.getDeclaringClass().getCanonicalName())
                 .paramTypes(method.getParameterTypes())
                 .requestId(UUID.randomUUID().toString())
                 .build();
@@ -54,7 +54,7 @@ public class RpcClientFactoryBean implements FactoryBean<Object>, InvocationHand
         log.debug("调用远程方法\t{}({})", rpcRequest.getInterfaceName(),
                 Arrays.stream(rpcRequest.getParamTypes()).map(e -> e.getCanonicalName() + ".class").collect(Collectors.joining(",")));
         log.debug("--------------------------");
-        CompletableFuture<RpcResponse<Object>> completableFuture = mRpcRequestExecutor.sendRequest(rpcRequest);
+        CompletableFuture<RpcResponse<Object>> completableFuture = rpcRequestExecutor.sendRequest(rpcRequest);
         RpcResponse<Object> rpcResponse = completableFuture.get();
         this.check(rpcResponse, rpcRequest);
         return rpcResponse.getData();

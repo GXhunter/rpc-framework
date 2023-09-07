@@ -14,10 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class SPIFactory {
     private static final Map<Class<?>, Object> MAP = new ConcurrentHashMap<>();
 
-    public static <S> S getInstance(@NonNull Class<S> type) {
-        return getInstance(type, null);
+    public static <S> S getImplement(@NonNull Class<S> type) {
+        return getImplement(type, null);
     }
-    public static <S> S getInstance(@NonNull Class<S> type, String canonicalName) {
+    public static <S> S getImplement(@NonNull Class<S> type, String canonicalName) {
         if (MAP.containsKey(type)) {
             return (S) MAP.get(type);
         }

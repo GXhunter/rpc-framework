@@ -3,7 +3,7 @@ package com.github.gxhunter.rpc.core.spring;
 import com.github.gxhunter.rpc.common.annotation.RpcClient;
 import com.github.gxhunter.rpc.common.extension.SPIFactory;
 import com.github.gxhunter.rpc.core.annotation.EnableRpcServices;
-import com.github.gxhunter.rpc.core.client.RpcClientFactoryBean;
+import com.github.gxhunter.rpc.core.client.RpcClientProxy;
 import com.github.gxhunter.rpc.core.client.RpcRequestExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.FactoryBean;
@@ -30,7 +30,6 @@ import org.springframework.util.ClassUtils;
  * scan and filter specified annotations
  *
  * @author hunter
- * 
  */
 @Slf4j
 public class RpcClientScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
@@ -81,25 +80,27 @@ public class RpcClientScannerRegistrar implements ImportBeanDefinitionRegistrar,
                     AnnotationMetadata annotationMetadata = ((AnnotatedBeanDefinition) beanDefinition).getMetadata();
                     Assert.isTrue(annotationMetadata.isInterface(), "@RpcClient 只能添加在interface上");
                     AnnotationAttributes attributes = AnnotationAttributes.fromMap(annotationMetadata.getAnnotationAttributes(RpcClient.class.getName()));
-                    registerRpcClient(registry, annotationMetadata, attributes);
+                    registerRpcClient(registry, annotationMetadata.getClassName(), attributes);
                 }
             }
         }
     }
 
-    private void registerRpcClient(BeanDefinitionRegistry registry, AnnotationMetadata metadata, AnnotationAttributes attributes) {
-        String className = metadata.getClassName();
-        Class clazz = ClassUtils.resolveClassName(className, null);
-        RpcClientFactoryBean factoryBean = new RpcClientFactoryBean();
-        factoryBean.setType(clazz);
-        factoryBean.setMRpcRequestExecutor(SPIFactory.getInstance(RpcRequestExecutor.class));
-        AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder.genericBeanDefinition(clazz, factoryBean::getObject)
+    /**
+     * @param registry   注册器
+     * @param className  接口名称
+     * @param attributes @RpcClient 注解属性
+     */
+    private void registerRpcClient(BeanDefinitionRegistry registry, String className, AnnotationAttributes attributes) {
+        Class clazz = ClassUtils.resolveClassName(className, ClassUtils.getDefaultClassLoader());
+        RpcClientProxy rpcClientProxy = new RpcClientProxy(clazz,SPIFactory.getImplement(RpcRequestExecutor.class));
+        AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder.genericBeanDefinition(clazz, rpcClientProxy::getObject)
                 .setPrimary(attributes.getBoolean("primary"))
                 .setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE)
                 .getBeanDefinition();
         beanDefinition.setAttribute(FactoryBean.OBJECT_TYPE_ATTRIBUTE, className);
-        beanDefinition.setAttribute("rpcClientsRegistrarFactoryBean", factoryBean);
-        log.info("注册:{}到spring容器\n", className);
+        beanDefinition.setAttribute("rpcClientsRegistrarFactoryBean", rpcClientProxy);
+        log.debug("注册:{}到spring容器\n", className);
         BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition, className,
                 attributes.getStringArray("alias").length == 0 ? null : attributes.getStringArray("alias"));
         BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);

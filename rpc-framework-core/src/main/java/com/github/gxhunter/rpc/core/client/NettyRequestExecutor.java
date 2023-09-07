@@ -59,7 +59,7 @@ public final class NettyRequestExecutor implements RpcRequestExecutor, AutoClose
                         p.addLast(new NettyRpcClientHandler());
                     }
                 });
-        this.serviceDiscovery = SPIFactory.getInstance(ServiceDiscovery.class);
+        this.serviceDiscovery = SPIFactory.getImplement(ServiceDiscovery.class);
         this.channelProvider = SingletonFactory.getInstance(ChannelProvider.class);
     }
 

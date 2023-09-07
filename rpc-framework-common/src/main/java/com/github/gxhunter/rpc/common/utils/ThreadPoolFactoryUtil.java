@@ -49,26 +49,17 @@ public final class ThreadPoolFactoryUtil {
 
 
     /**
-     * 创建 ThreadFactory 。如果threadNamePrefix不为空则使用自建ThreadFactory，否则使用defaultThreadFactory
      *
      * @param threadNamePrefix 作为创建的线程名字的前缀
      * @param daemon           指定是否为 Daemon Thread(守护线程)
      * @return ThreadFactory
      */
-    public static ThreadFactory createThreadFactory(String threadNamePrefix, Boolean daemon) {
-        if (daemon == null) {
-            return r -> {
-                Thread thread = new Thread(r);
-                thread.setName(threadNamePrefix + ATOMIC_INTEGER.getAndIncrement());
-                return thread;
-            };
-        } else {
-            return r -> {
-                Thread thread = new Thread(r);
-                thread.setDaemon(daemon);
-                thread.setName(threadNamePrefix + ATOMIC_INTEGER.getAndIncrement());
-                return thread;
-            };
-        }
+    public static ThreadFactory createThreadFactory(String threadNamePrefix, boolean daemon) {
+        return r -> {
+            Thread thread = new Thread(r);
+            thread.setDaemon(daemon);
+            thread.setName(threadNamePrefix + ATOMIC_INTEGER.getAndIncrement());
+            return thread;
+        };
     }
 }
