@@ -43,7 +43,7 @@ public class RpcClientProxy implements InvocationHandler {
         if (method.isDefault() || method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);
         }
-        log.info("invoked method: [{}]", method.getName());
+        log.debug("invoked method: [{}]", method.getName());
         RpcRequest rpcRequest = RpcRequest.builder().methodName(method.getName())
                 .parameters(args)
                 .interfaceName(method.getDeclaringClass().getCanonicalName())

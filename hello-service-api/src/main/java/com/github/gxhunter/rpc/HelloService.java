@@ -7,7 +7,7 @@ import com.github.gxhunter.rpc.common.annotation.RpcClient;
  * @author hunter
  * 
  */
-@RpcClient
+@RpcClient(primary = false,alias = "haha")
 public interface HelloService {
     String hello(String message);
 }
