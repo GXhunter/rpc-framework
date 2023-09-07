@@ -32,7 +32,7 @@ public class RpcServerScannerRegistrar extends AbstractAnnotationImportBeanDefin
     }
 
     @Override
-    protected void doRegister(DefaultListableBeanFactory listableBeanFactory, AnnotatedBeanDefinition beanDefinition) {
+    protected void registerBeanDefinitions(DefaultListableBeanFactory listableBeanFactory, AnnotatedBeanDefinition beanDefinition) {
         AnnotationMetadata annotationMetadata = beanDefinition.getMetadata();
         String className = annotationMetadata.getClassName();
         listableBeanFactory.registerBeanDefinition(className, beanDefinition);

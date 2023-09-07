@@ -17,6 +17,9 @@ import org.springframework.util.ClassUtils;
 
 import java.lang.annotation.Annotation;
 
+/**
+ * 基于注解的bean扫描装载
+ */
 public abstract class AbstractAnnotationImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
     private ResourceLoader resourceLoader;
     private Environment environment;
@@ -24,24 +27,33 @@ public abstract class AbstractAnnotationImportBeanDefinitionRegistrar implements
     /**
      * @return 导入spring的注解
      */
-    public abstract Class<? extends Annotation> getImportBeanAnnotation();
+    protected abstract Class<? extends Annotation> getImportBeanAnnotation();
 
     /**
      * @return 按注解过滤
      */
-    public abstract Class<? extends Annotation> getFilterAnnotation();
+    protected abstract Class<? extends Annotation> getFilterAnnotation();
 
     /**
      * @return 扫描的包
      */
-    public String getBasePackageAttributeName() {
+    protected String getBasePackageAttributeName() {
         return "basePackage";
     }
 
+    /**
+     * 获取注解的属性
+     *
+     * @param annotationMetadata 注解元数据
+     * @return 属性kv
+     */
+    protected final AnnotationAttributes getAnnotationAttributes(AnnotationMetadata annotationMetadata,Class<? extends Annotation> type) {
+        return AnnotationAttributes.fromMap(annotationMetadata.getAnnotationAttributes(type.getName()));
+    }
+
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry) {
-        AnnotationAttributes rpcScanAnnotationAttributes
-                = AnnotationAttributes.fromMap(annotationMetadata.getAnnotationAttributes(getImportBeanAnnotation().getName()));
+    public final void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry) {
+        AnnotationAttributes rpcScanAnnotationAttributes = getAnnotationAttributes(annotationMetadata,getImportBeanAnnotation());
         String[] basePackages = new String[0];
         if (rpcScanAnnotationAttributes != null) {
             // get the value of the basePackage property
@@ -73,13 +85,13 @@ public abstract class AbstractAnnotationImportBeanDefinitionRegistrar implements
         for (String basePackage : basePackages) {
             for (BeanDefinition beanDefinition : scanner.findCandidateComponents(basePackage)) {
                 if (beanDefinition instanceof AnnotatedBeanDefinition) {
-                    doRegister((DefaultListableBeanFactory) registry, (AnnotatedBeanDefinition) beanDefinition);
+                    registerBeanDefinitions((DefaultListableBeanFactory) registry, (AnnotatedBeanDefinition) beanDefinition);
                 }
             }
         }
     }
 
-    protected abstract void doRegister(DefaultListableBeanFactory listableBeanFactory, AnnotatedBeanDefinition beanDefinition);
+    protected abstract void registerBeanDefinitions(DefaultListableBeanFactory listableBeanFactory, AnnotatedBeanDefinition beanDefinition);
 
     @Override
     public void setEnvironment(Environment environment) {

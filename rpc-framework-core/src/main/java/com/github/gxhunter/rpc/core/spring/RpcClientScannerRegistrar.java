@@ -2,29 +2,22 @@ package com.github.gxhunter.rpc.core.spring;
 
 import com.github.gxhunter.rpc.common.annotation.RpcClient;
 import com.github.gxhunter.rpc.common.extension.SPIFactory;
-import com.github.gxhunter.rpc.core.annotation.EnableRpcServices;
+import com.github.gxhunter.rpc.core.annotation.EnableRpcClients;
 import com.github.gxhunter.rpc.core.client.RpcClientProxy;
 import com.github.gxhunter.rpc.core.client.RpcRequestExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.context.ResourceLoaderAware;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
+
+import java.lang.annotation.Annotation;
 
 /**
  * scan and filter specified annotations
@@ -32,83 +25,32 @@ import org.springframework.util.ClassUtils;
  * @author hunter
  */
 @Slf4j
-public class RpcClientScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
-    private ResourceLoader resourceLoader;
-    private Environment environment;
-
+public class RpcClientScannerRegistrar extends AbstractAnnotationImportBeanDefinitionRegistrar {
     @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-
+    public Class<? extends Annotation> getImportBeanAnnotation() {
+        return EnableRpcClients.class;
+    }
+    @Override
+    public Class<? extends Annotation> getFilterAnnotation() {
+        return RpcClient.class;
     }
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-        //get the attributes and values ​​of RpcScan annotation
-        AnnotationAttributes rpcScanAnnotationAttributes
-                = AnnotationAttributes.fromMap(metadata.getAnnotationAttributes(EnableRpcServices.class.getName()));
-        String[] rpcScanBasePackages = new String[0];
-        if (rpcScanAnnotationAttributes != null) {
-            // get the value of the basePackage property
-            rpcScanBasePackages = rpcScanAnnotationAttributes.getStringArray("basePackage");
-        }
-        if (rpcScanBasePackages.length == 0) {
-            rpcScanBasePackages = new String[]{ClassUtils.getPackageName(metadata.getClassName())};
-        }
-        // Scan the RpcService annotation
-        ClassPathScanningCandidateComponentProvider rpcClientScanner = new ClassPathScanningCandidateComponentProvider(false, this.environment) {
-            {
-                this.setResourceLoader(RpcClientScannerRegistrar.this.resourceLoader);
-                this.addIncludeFilter(new AnnotationTypeFilter(RpcClient.class));
-            }
-
-            @Override
-            protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
-                boolean isCandidate = false;
-                if (beanDefinition.getMetadata().isIndependent()) {
-                    if (!beanDefinition.getMetadata().isAnnotation()) {
-                        isCandidate = true;
-                    }
-                }
-                return isCandidate;
-            }
-        };
-
-        for (String basePackage : rpcScanBasePackages) {
-            for (BeanDefinition beanDefinition : rpcClientScanner.findCandidateComponents(basePackage)) {
-                if (beanDefinition instanceof AnnotatedBeanDefinition) {
-                    AnnotationMetadata annotationMetadata = ((AnnotatedBeanDefinition) beanDefinition).getMetadata();
-                    Assert.isTrue(annotationMetadata.isInterface(), "@RpcClient 只能添加在interface上");
-                    AnnotationAttributes attributes = AnnotationAttributes.fromMap(annotationMetadata.getAnnotationAttributes(RpcClient.class.getName()));
-                    registerRpcClient(registry, annotationMetadata.getClassName(), attributes);
-                }
-            }
-        }
-    }
-
-    /**
-     * @param registry   注册器
-     * @param className  接口名称
-     * @param attributes @RpcClient 注解属性
-     */
-    private void registerRpcClient(BeanDefinitionRegistry registry, String className, AnnotationAttributes attributes) {
+    protected void registerBeanDefinitions(DefaultListableBeanFactory listableBeanFactory, AnnotatedBeanDefinition beanDefinition) {
+        AnnotationMetadata metadata = beanDefinition.getMetadata();
+        String className = metadata.getClassName();
+        AnnotationAttributes attributes = getAnnotationAttributes(metadata,getFilterAnnotation());
         Class clazz = ClassUtils.resolveClassName(className, ClassUtils.getDefaultClassLoader());
         RpcClientProxy rpcClientProxy = new RpcClientProxy(clazz,SPIFactory.getImplement(RpcRequestExecutor.class));
-        AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder.genericBeanDefinition(clazz, rpcClientProxy::getObject)
+        AbstractBeanDefinition abstractBeanDefinition = BeanDefinitionBuilder.genericBeanDefinition(clazz, rpcClientProxy::getObject)
                 .setPrimary(attributes.getBoolean("primary"))
                 .setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE)
                 .getBeanDefinition();
-        beanDefinition.setAttribute(FactoryBean.OBJECT_TYPE_ATTRIBUTE, className);
-        beanDefinition.setAttribute("rpcClientsRegistrarFactoryBean", rpcClientProxy);
+        abstractBeanDefinition.setAttribute(FactoryBean.OBJECT_TYPE_ATTRIBUTE, className);
+        abstractBeanDefinition.setAttribute("rpcClientsRegistrarFactoryBean", rpcClientProxy);
         log.debug("注册:{}到spring容器\n", className);
-        BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition, className,
+        BeanDefinitionHolder holder = new BeanDefinitionHolder(abstractBeanDefinition, className,
                 attributes.getStringArray("alias").length == 0 ? null : attributes.getStringArray("alias"));
-        BeanDefinitionReaderUtils.registerBeanDefinition(holder, registry);
-    }
-
-
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
+        BeanDefinitionReaderUtils.registerBeanDefinition(holder, listableBeanFactory);
     }
 }
