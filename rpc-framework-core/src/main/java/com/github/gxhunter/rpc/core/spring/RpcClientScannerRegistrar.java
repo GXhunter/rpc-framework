@@ -39,7 +39,7 @@ public class RpcClientScannerRegistrar extends AbstractAnnotationImportBeanDefin
     protected void registerBeanDefinitions(DefaultListableBeanFactory listableBeanFactory, AnnotatedBeanDefinition beanDefinition) {
         AnnotationMetadata metadata = beanDefinition.getMetadata();
         String className = metadata.getClassName();
-        AnnotationAttributes attributes = getAnnotationAttributes(metadata,getFilterAnnotation());
+        AnnotationAttributes attributes = AnnotationAttributes.fromMap(metadata.getAnnotationAttributes(getFilterAnnotation().getName()));
         Class clazz = ClassUtils.resolveClassName(className, ClassUtils.getDefaultClassLoader());
         RpcClientProxy rpcClientProxy = new RpcClientProxy(clazz,SPIFactory.getImplement(RpcRequestExecutor.class));
         AbstractBeanDefinition abstractBeanDefinition = BeanDefinitionBuilder.genericBeanDefinition(clazz, rpcClientProxy::getObject)

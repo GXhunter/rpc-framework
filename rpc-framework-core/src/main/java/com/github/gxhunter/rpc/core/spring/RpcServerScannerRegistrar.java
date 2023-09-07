@@ -37,7 +37,7 @@ public class RpcServerScannerRegistrar extends AbstractAnnotationImportBeanDefin
         String className = annotationMetadata.getClassName();
         listableBeanFactory.registerBeanDefinition(className, beanDefinition);
         Object bean = listableBeanFactory.getBean(className);
-        log.info("注册:{}到容器", bean.getClass().getCanonicalName());
+        log.debug("注册:{}到容器", bean.getClass().getCanonicalName());
         serviceProvider.publishService(bean);
     }
 

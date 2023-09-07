@@ -41,19 +41,10 @@ public abstract class AbstractAnnotationImportBeanDefinitionRegistrar implements
         return "basePackage";
     }
 
-    /**
-     * 获取注解的属性
-     *
-     * @param annotationMetadata 注解元数据
-     * @return 属性kv
-     */
-    protected final AnnotationAttributes getAnnotationAttributes(AnnotationMetadata annotationMetadata,Class<? extends Annotation> type) {
-        return AnnotationAttributes.fromMap(annotationMetadata.getAnnotationAttributes(type.getName()));
-    }
-
     @Override
     public final void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry) {
-        AnnotationAttributes rpcScanAnnotationAttributes = getAnnotationAttributes(annotationMetadata,getImportBeanAnnotation());
+        AnnotationAttributes rpcScanAnnotationAttributes
+                = AnnotationAttributes.fromMap(annotationMetadata.getAnnotationAttributes(getImportBeanAnnotation().getName()));
         String[] basePackages = new String[0];
         if (rpcScanAnnotationAttributes != null) {
             // get the value of the basePackage property
@@ -91,6 +82,12 @@ public abstract class AbstractAnnotationImportBeanDefinitionRegistrar implements
         }
     }
 
+    /**
+     * 注册bean到spring容器中
+     *
+     * @param listableBeanFactory spring上下文工厂对象
+     * @param beanDefinition      bean 数据
+     */
     protected abstract void registerBeanDefinitions(DefaultListableBeanFactory listableBeanFactory, AnnotatedBeanDefinition beanDefinition);
 
     @Override
