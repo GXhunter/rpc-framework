@@ -16,10 +16,10 @@
         <guava.version>30.1.1-jre</guava.version>
         <checkstyle-maven-plugin.version>3.1.1</checkstyle-maven-plugin.version>
         <springboot.version>2.7.15</springboot.version>
-        <curator-version>4.2.0</curator-version>
+        <curator-version>5.5.0</curator-version>
         <!-- test -->
         <junit.jupiter.version>5.5.2</junit.jupiter.version>
-        <junit.platform.version>1.5.2</junit.platform.version>
+        <junit.platform.version>1.10.0</junit.platform.version>
         <!--logging-->
         <slf4j.version>1.7.25</slf4j.version>
         <!-- protostuff -->
@@ -42,21 +42,10 @@
             <version>1.18.8</version>
             <scope>provided</scope>
         </dependency>
-        <!-- guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
         <!-- log -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
         <!-- test -->

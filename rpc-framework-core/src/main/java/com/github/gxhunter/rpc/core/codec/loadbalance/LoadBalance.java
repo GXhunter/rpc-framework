@@ -1,4 +1,4 @@
-package com.github.gxhunter.rpc.core.loadbalance;
+package com.github.gxhunter.rpc.core.codec.loadbalance;
 
 import com.github.gxhunter.rpc.common.extension.SPI;
 import com.github.gxhunter.rpc.core.dto.RpcRequest;

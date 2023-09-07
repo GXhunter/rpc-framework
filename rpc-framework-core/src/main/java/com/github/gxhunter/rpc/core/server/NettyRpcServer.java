@@ -13,6 +13,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -30,17 +31,22 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 public class NettyRpcServer {
-
-
+    private final String host;
+    private final EventLoopGroup bossGroup;
+    private final EventLoopGroup workerGroup;
+    private final EventExecutorGroup serviceHandlerGroup;
     @SneakyThrows
-    public void start() {
-        String host = InetAddress.getLocalHost().getHostAddress();
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-        DefaultEventExecutorGroup serviceHandlerGroup = new DefaultEventExecutorGroup(
+    public NettyRpcServer() {
+        host = InetAddress.getLocalHost().getHostAddress();
+        bossGroup = new NioEventLoopGroup(1);
+        workerGroup = new NioEventLoopGroup();
+        serviceHandlerGroup = new DefaultEventExecutorGroup(
                 Runtime.getRuntime().availableProcessors() * 2,
-                ThreadPoolFactoryUtil.createThreadFactory("service-handler-group", false)
+                ThreadPoolFactoryUtil.createThreadFactory("service-rpc-group", false)
         );
+    }
+
+    public void start() {
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)

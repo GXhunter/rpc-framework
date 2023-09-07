@@ -1,16 +1,18 @@
 package com.github.gxhunter.rpc.common.utils;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 创建 ThreadPool(线程池) 的工具类.
  *
  * @author hunter
- * 
  */
 @Slf4j
 public final class ThreadPoolFactoryUtil {
@@ -21,6 +23,7 @@ public final class ThreadPoolFactoryUtil {
      * value: threadPool
      */
     private static final Map<String, ExecutorService> THREAD_POOLS = new ConcurrentHashMap<>();
+    private static final AtomicInteger ATOMIC_INTEGER = new AtomicInteger(0);
 
     private ThreadPoolFactoryUtil() {
 
@@ -53,15 +56,19 @@ public final class ThreadPoolFactoryUtil {
      * @return ThreadFactory
      */
     public static ThreadFactory createThreadFactory(String threadNamePrefix, Boolean daemon) {
-        if (threadNamePrefix != null) {
-            if (daemon != null) {
-                return new ThreadFactoryBuilder()
-                        .setNameFormat(threadNamePrefix + "-%d")
-                        .setDaemon(daemon).build();
-            } else {
-                return new ThreadFactoryBuilder().setNameFormat(threadNamePrefix + "-%d").build();
-            }
+        if (daemon == null) {
+            return r -> {
+                Thread thread = new Thread(r);
+                thread.setName(threadNamePrefix + ATOMIC_INTEGER.getAndIncrement());
+                return thread;
+            };
+        } else {
+            return r -> {
+                Thread thread = new Thread(r);
+                thread.setDaemon(daemon);
+                thread.setName(threadNamePrefix + ATOMIC_INTEGER.getAndIncrement());
+                return thread;
+            };
         }
-        return Executors.defaultThreadFactory();
     }
 }
