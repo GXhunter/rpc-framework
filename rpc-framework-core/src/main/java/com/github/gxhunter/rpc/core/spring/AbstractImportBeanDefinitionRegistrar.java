@@ -1,5 +1,7 @@
 package com.github.gxhunter.rpc.core.spring;
 
+import com.github.gxhunter.rpc.common.extension.SPIFactory;
+import com.github.gxhunter.rpc.core.registry.ServiceRegistry;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -23,6 +25,7 @@ import java.lang.annotation.Annotation;
 public abstract class AbstractImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
     private ResourceLoader resourceLoader;
     private Environment environment;
+    public final ServiceRegistry serviceRegistry = SPIFactory.getImplement(ServiceRegistry.class);
 
     /**
      * @return 导入spring的注解
@@ -41,8 +44,11 @@ public abstract class AbstractImportBeanDefinitionRegistrar implements ImportBea
         return "basePackage";
     }
 
+    public void onStartImport(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry) {
+    }
     @Override
     public final void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry) {
+        onStartImport(annotationMetadata, registry);
         AnnotationAttributes rpcScanAnnotationAttributes
                 = AnnotationAttributes.fromMap(annotationMetadata.getAnnotationAttributes(getImportBeanAnnotation().getName()));
         String[] basePackages = new String[0];

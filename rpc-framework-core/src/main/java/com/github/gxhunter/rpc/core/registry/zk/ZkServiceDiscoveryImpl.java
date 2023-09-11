@@ -25,7 +25,7 @@ public class ZkServiceDiscoveryImpl implements ServiceDiscovery {
 
     @Override
     public InetSocketAddress lookupService(RpcRequest rpcRequest) {
-        String rpcServiceName = rpcRequest.getRpcServiceName();
+        String rpcServiceName = rpcRequest.getRpcServerName();
         ZookeeperOperator zookeeperOperator = SingletonFactory.getInstance(ZookeeperOperator.class);
         List<String> serviceUrlList = zookeeperOperator.getChildrenNodes(rpcServiceName);
         if (serviceUrlList == null || serviceUrlList.isEmpty()) {

@@ -42,4 +42,5 @@ public class RpcConstants {
      */
     public static final Map<String, CompletableFuture<RpcResponse<Object>>> UNPROCESSED_RESPONSE_FUTURES_HOLDER = new ConcurrentHashMap<>();
 
+    public static final CompletableFuture<String> SERVER_NAME = new CompletableFuture<>();
 }

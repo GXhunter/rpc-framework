@@ -12,13 +12,10 @@ import lombok.*;
 @Builder
 @ToString
 public class RpcRequest  {
+    private String rpcServerName;
     private String requestId;
     private String interfaceName;
     private String methodName;
     private Object[] parameters;
     private Class<?>[] paramTypes;
-
-    public String getRpcServiceName() {
-        return this.getInterfaceName();
-    }
 }

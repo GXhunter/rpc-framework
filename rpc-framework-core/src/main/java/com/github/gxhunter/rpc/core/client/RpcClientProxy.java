@@ -1,5 +1,6 @@
 package com.github.gxhunter.rpc.core.client;
 
+import com.github.gxhunter.rpc.common.annotation.RpcClient;
 import com.github.gxhunter.rpc.common.enums.RpcErrorMessageEnum;
 import com.github.gxhunter.rpc.common.enums.RpcResponseCodeEnum;
 import com.github.gxhunter.rpc.common.exception.RpcException;
@@ -11,6 +12,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -43,8 +45,15 @@ public class RpcClientProxy implements InvocationHandler {
         if (method.isDefault() || method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);
         }
+        Class<?> clazz = proxy.getClass().getInterfaces()[0];
+        if (!clazz.isAnnotationPresent(RpcClient.class)) {
+            throw new IllegalAccessException(String.format(Locale.ROOT,"方法%s没有%s注解",method.getName(),RpcClient.class.getCanonicalName()));
+        }
+        RpcClient annotation = clazz.getAnnotation(RpcClient.class);
         log.debug("invoked method: [{}]", method.getName());
-        RpcRequest rpcRequest = RpcRequest.builder().methodName(method.getName())
+        RpcRequest rpcRequest = RpcRequest.builder()
+                .rpcServerName(annotation.value())
+                .methodName(method.getName())
                 .parameters(args)
                 .interfaceName(method.getDeclaringClass().getCanonicalName())
                 .paramTypes(method.getParameterTypes())

@@ -16,7 +16,6 @@ import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.util.concurrent.CompletableFuture;
@@ -28,15 +27,14 @@ import java.util.concurrent.TimeUnit;
  * and then return the result to the client.
  *
  * @author hunter
- * 
  */
 @Slf4j
-@Component
-public class NettyRpcServer implements IRpcServer{
+public class NettyRpcServer implements IRpcServer {
     private final String host;
     private final EventLoopGroup bossGroup;
     private final EventLoopGroup workerGroup;
     private final EventExecutorGroup serviceHandlerGroup;
+
     @SneakyThrows
     public NettyRpcServer() {
         host = InetAddress.getLocalHost().getHostAddress();
@@ -66,11 +64,11 @@ public class NettyRpcServer implements IRpcServer{
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             // 30 秒之内没有收到客户端请求的话就关闭连接
-                            ChannelPipeline p = ch.pipeline();
-                            p.addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS));
-                            p.addLast(new RpcMessageEncoder());
-                            p.addLast(new RpcMessageDecoder());
-                            p.addLast(serviceHandlerGroup, new NettyRpcServerHandler());
+                            ChannelPipeline p = ch.pipeline()
+                                    .addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS))
+                                    .addLast(new RpcMessageEncoder())
+                                    .addLast(new RpcMessageDecoder())
+                                    .addLast(serviceHandlerGroup, new NettyRpcServerHandler());
                         }
                     });
 

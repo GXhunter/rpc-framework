@@ -12,7 +12,12 @@ public @interface RpcClient {
     boolean primary() default true;
 
     /**
-     * @return bean名称
+     * @return 目标服务名
+     */
+    String value();
+
+    /**
+     * @return bean别名
      */
     String[] alias() default {};
 }

@@ -17,6 +17,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface EnableRpcServices {
 
+    String serverName();
     String[] basePackage() default {};
 
 }

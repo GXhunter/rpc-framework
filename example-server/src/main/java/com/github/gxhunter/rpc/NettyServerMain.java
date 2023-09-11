@@ -20,7 +20,7 @@ import java.net.UnknownHostException;
  * 通过@RpcService 注解自动注册服务
  * @see RpcService
  */
-@EnableRpcServices
+@EnableRpcServices(serverName = "TestServer")
 @SpringBootApplication
 public class NettyServerMain {
     public static void main(String[] args) {

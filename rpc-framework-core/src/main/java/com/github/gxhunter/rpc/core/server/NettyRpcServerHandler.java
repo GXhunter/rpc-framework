@@ -9,8 +9,8 @@ import com.github.gxhunter.rpc.core.RpcConstants;
 import com.github.gxhunter.rpc.core.dto.RpcMessage;
 import com.github.gxhunter.rpc.core.dto.RpcRequest;
 import com.github.gxhunter.rpc.core.dto.RpcResponse;
-import com.github.gxhunter.rpc.core.provider.ServiceProvider;
-import com.github.gxhunter.rpc.core.provider.impl.ZkServiceProviderImpl;
+import com.github.gxhunter.rpc.core.provider.BeanProvider;
+import com.github.gxhunter.rpc.core.provider.impl.LocalBeanProvider;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -30,14 +30,13 @@ import java.lang.reflect.Method;
  * channelRead 方法会替你释放 ByteBuf ，避免可能导致的内存泄露问题。详见《Netty进阶之路 跟着案例学 Netty》
  *
  * @author hunter
- * 
  */
 @Slf4j
 public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
-    private final ServiceProvider serviceProvider;
+    private final BeanProvider<?> mBeanProvider;
 
     public NettyRpcServerHandler() {
-        serviceProvider = SingletonFactory.getInstance(ZkServiceProviderImpl.class);
+        mBeanProvider = SingletonFactory.getInstance(LocalBeanProvider.class);
     }
 
     @Override
@@ -56,7 +55,7 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
                     RpcRequest rpcRequest = (RpcRequest) ((RpcMessage) msg).getData();
                     // Execute the target method (the method the client needs to execute) and return the method result
                     Object result = handle(rpcRequest);
-                    log.info("服务端执行结果:{}",result);
+                    log.info("服务端执行结果:{}", result);
                     rpcMessage.setMessageType(RpcConstants.RESPONSE_TYPE);
                     if (ctx.channel().isActive() && ctx.channel().isWritable()) {
                         RpcResponse<Object> rpcResponse = RpcResponse.success(result, rpcRequest.getRequestId());
@@ -77,21 +76,20 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        if (evt instanceof IdleStateEvent) {
-            IdleState state = ((IdleStateEvent) evt).state();
-            if (state == IdleState.READER_IDLE) {
-                log.info("idle check happen, so close the connection");
-                ctx.close();
-            }
-        } else {
+        if (!(ctx instanceof IdleStateEvent)) {
             super.userEventTriggered(ctx, evt);
+            return;
+        }
+        IdleState state = ((IdleStateEvent) evt).state();
+        if (state == IdleState.READER_IDLE) {
+            log.info("idle check happen, so close the connection");
+            ctx.close();
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("server catch exception");
-        cause.printStackTrace();
+        log.error("服务异常", cause);
         ctx.close();
     }
 
@@ -99,13 +97,14 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
      * 处理 rpcRequest：调用相应的方法，返回方法结果
      */
     public Object handle(RpcRequest rpcRequest) {
-        Object service = serviceProvider.getService(rpcRequest.getRpcServiceName());
+        Object service = mBeanProvider.getBean(rpcRequest.getInterfaceName());
         Object result;
         try {
             Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
             result = method.invoke(service, rpcRequest.getParameters());
             log.info("service:[{}] 成功执行方法:[{}]", rpcRequest.getInterfaceName(), rpcRequest.getMethodName());
-        } catch (NoSuchMethodException | IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
+        } catch (NoSuchMethodException | IllegalArgumentException | InvocationTargetException |
+                 IllegalAccessException e) {
             throw new RpcException(e.getMessage(), e);
         }
         return result;
