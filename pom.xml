@@ -7,17 +7,33 @@
     <artifactId>rpc-framework</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <description>A remote service call based on java and spring</description>
+    <url>https://github.com/GXhunter/rpc-framework</url>
     <developers>
         <developer>
             <id>hunter</id>
             <name>树荫下的天空</name>
-            <url>git@github.com:GXhunter/rpc-framework.git</url>
             <roles>
                 <role>master</role>
                 <role>developer</role>
             </roles>
+            <timezone>+8</timezone>
         </developer>
     </developers>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <url>${url}</url>
+        <connection>git@github.com:GXhunter/rpc-framework.git</connection>
+        <tag>${version}</tag>
+    </scm>
+
     <properties>
         <encoding>UTF-8</encoding>
         <maven.compiler.source>1.8</maven.compiler.source>
