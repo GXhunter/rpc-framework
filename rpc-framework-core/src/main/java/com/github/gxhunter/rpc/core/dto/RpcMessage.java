@@ -1,7 +1,10 @@
 package com.github.gxhunter.rpc.core.dto;
 
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author hunter
@@ -9,10 +12,8 @@ import lombok.*;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Builder
-@ToString
+@Data
 public class RpcMessage {
 
     /**

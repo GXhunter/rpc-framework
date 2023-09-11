@@ -1,7 +1,6 @@
 package com.github.gxhunter.rpc.core.provider.impl;
 
-import com.github.gxhunter.rpc.core.provider.BeanProvider;
-import com.github.gxhunter.rpc.core.spring.Monad;
+import com.github.gxhunter.rpc.core.provider.BeanFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -12,10 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  */
 @Slf4j
-public class LocalBeanProvider implements BeanProvider<Object> {
+public class LocalBeanFactory implements BeanFactory {
     private final Map<String,Object> mContext;
 
-    public LocalBeanProvider() {
+    public LocalBeanFactory() {
         mContext = new ConcurrentHashMap<>();
     }
 
@@ -25,8 +24,7 @@ public class LocalBeanProvider implements BeanProvider<Object> {
     }
 
     @Override
-    public Monad<Object> addBean(String beanName, Object bean) {
+    public void addBean(String beanName, Object bean) {
         mContext.put(beanName, bean);
-        return biConsumer -> biConsumer.accept(beanName,bean);
     }
 }

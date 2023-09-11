@@ -1,7 +1,10 @@
 package com.github.gxhunter.rpc.core.dto;
 
 import com.github.gxhunter.rpc.common.enums.RpcResponseCodeEnum;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author hunter
@@ -9,10 +12,8 @@ import lombok.*;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Builder
-@ToString
+@Data
 public class RpcResponse<T>  {
 
     private String requestId;

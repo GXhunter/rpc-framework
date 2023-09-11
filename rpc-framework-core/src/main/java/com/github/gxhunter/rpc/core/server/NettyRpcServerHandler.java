@@ -9,8 +9,8 @@ import com.github.gxhunter.rpc.core.RpcConstants;
 import com.github.gxhunter.rpc.core.dto.RpcMessage;
 import com.github.gxhunter.rpc.core.dto.RpcRequest;
 import com.github.gxhunter.rpc.core.dto.RpcResponse;
-import com.github.gxhunter.rpc.core.provider.BeanProvider;
-import com.github.gxhunter.rpc.core.provider.impl.LocalBeanProvider;
+import com.github.gxhunter.rpc.core.provider.BeanFactory;
+import com.github.gxhunter.rpc.core.provider.impl.LocalBeanFactory;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -33,10 +33,10 @@ import java.lang.reflect.Method;
  */
 @Slf4j
 public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
-    private final BeanProvider<?> mBeanProvider;
+    private final BeanFactory mBeanFactory;
 
     public NettyRpcServerHandler() {
-        mBeanProvider = SingletonFactory.getInstance(LocalBeanProvider.class);
+        mBeanFactory = SingletonFactory.getInstance(LocalBeanFactory.class);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class NettyRpcServerHandler extends ChannelInboundHandlerAdapter {
      * 处理 rpcRequest：调用相应的方法，返回方法结果
      */
     public Object handle(RpcRequest rpcRequest) {
-        Object service = mBeanProvider.getBean(rpcRequest.getInterfaceName());
+        Object service = mBeanFactory.getBean(rpcRequest.getInterfaceName());
         Object result;
         try {
             Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());

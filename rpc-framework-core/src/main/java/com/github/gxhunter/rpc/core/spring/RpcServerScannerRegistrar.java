@@ -4,8 +4,8 @@ import com.github.gxhunter.rpc.common.annotation.RpcService;
 import com.github.gxhunter.rpc.common.factory.SingletonFactory;
 import com.github.gxhunter.rpc.core.RpcConstants;
 import com.github.gxhunter.rpc.core.annotation.EnableRpcServices;
-import com.github.gxhunter.rpc.core.provider.BeanProvider;
-import com.github.gxhunter.rpc.core.provider.impl.LocalBeanProvider;
+import com.github.gxhunter.rpc.core.provider.BeanFactory;
+import com.github.gxhunter.rpc.core.provider.impl.LocalBeanFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
@@ -26,7 +26,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class RpcServerScannerRegistrar extends AbstractImportBeanDefinitionRegistrar {
-    private final BeanProvider<Object> mBeanProvider = SingletonFactory.getInstance(LocalBeanProvider.class);
+    private final BeanFactory mBeanFactory = SingletonFactory.getInstance(LocalBeanFactory.class);
 
     @Override
     public Class<? extends Annotation> getImportBeanAnnotation() {
@@ -58,7 +58,7 @@ public class RpcServerScannerRegistrar extends AbstractImportBeanDefinitionRegis
         listableBeanFactory.registerBeanDefinition(className, beanDefinition);
         Object bean = listableBeanFactory.getBean(className);
         log.debug("注册:{}到容器", bean.getClass().getCanonicalName());
-        mBeanProvider.addBean(className,bean);
+        mBeanFactory.addBean(className,bean);
     }
 
 }
