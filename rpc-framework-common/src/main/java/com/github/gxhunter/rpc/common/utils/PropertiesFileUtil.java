@@ -23,6 +23,9 @@ public final class PropertiesFileUtil {
         Properties properties = new Properties();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try (InputStream in = classLoader.getResourceAsStream(fileName)) {
+            if (in == null) {
+                throw new NullPointerException("找不到文件:"+fileName);
+            }
             properties.load(in);
         } catch (IOException e) {
             log.error("读取配置:{}失败",fileName);

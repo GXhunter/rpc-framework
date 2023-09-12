@@ -6,7 +6,7 @@
     <groupId>com.github.gxhunter</groupId>
     <artifactId>rpc-framework</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <description>A remote service call based on java and spring</description>
     <url>https://github.com/GXhunter/rpc-framework</url>
     <developers>
@@ -48,9 +48,6 @@
         <junit.platform.version>1.10.0</junit.platform.version>
     </properties>
     <modules>
-        <module>example-client</module>
-        <module>example-server</module>
-        <module>hello-service-api</module>
         <module>rpc-framework-common</module>
         <module>rpc-framework-core</module>
     </modules>
@@ -106,6 +103,34 @@
     </repositories>
     <build>
         <plugins>
+            <!-- Source -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

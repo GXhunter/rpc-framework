@@ -23,8 +23,8 @@ import java.lang.annotation.Annotation;
  * 基于注解的bean扫描装载
  */
 public abstract class AbstractImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
-    private ResourceLoader resourceLoader;
-    private Environment environment;
+    protected ResourceLoader resourceLoader;
+    protected Environment environment;
     public final ServiceRegistry serviceRegistry = SPIFactory.getImplement(ServiceRegistry.class);
 
     /**
@@ -41,14 +41,13 @@ public abstract class AbstractImportBeanDefinitionRegistrar implements ImportBea
      * @return 扫描的包
      */
     protected String getBasePackageAttributeName() {
-        return "basePackage";
+        return "basePackages";
     }
 
-    public void onStartImport(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry) {
+    public void onStartImport(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry, String[] basePackages) {
     }
     @Override
     public final void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry) {
-        onStartImport(annotationMetadata, registry);
         AnnotationAttributes rpcScanAnnotationAttributes
                 = AnnotationAttributes.fromMap(annotationMetadata.getAnnotationAttributes(getImportBeanAnnotation().getName()));
         String[] basePackages = new String[0];
@@ -59,6 +58,7 @@ public abstract class AbstractImportBeanDefinitionRegistrar implements ImportBea
         if (basePackages.length == 0) {
             basePackages = new String[]{ClassUtils.getPackageName(annotationMetadata.getClassName())};
         }
+        onStartImport(annotationMetadata, registry,basePackages);
 
         ClassPathScanningCandidateComponentProvider scanner =
                 new ClassPathScanningCandidateComponentProvider(false, this.environment) {

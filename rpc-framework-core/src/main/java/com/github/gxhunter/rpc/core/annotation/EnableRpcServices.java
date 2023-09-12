@@ -13,11 +13,11 @@ import java.lang.annotation.*;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(RpcServerScannerRegistrar.class)
+@Import({RpcServerScannerRegistrar.class})
 @Documented
 public @interface EnableRpcServices {
 
     String serverName();
-    String[] basePackage() default {};
+    String[] basePackages() default {};
 
 }

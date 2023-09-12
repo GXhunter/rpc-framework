@@ -41,7 +41,7 @@ public final class ZookeeperOperator {
         DEFAULT_ZOOKEEPER_ADDRESS = properties.getProperty("rpc.zookeeper.address");
     }
 
-    private ZookeeperOperator() {
+    public ZookeeperOperator() {
         // check if user has set zk address
         Properties properties = PropertiesFileUtil.readPropertiesFile(RpcConfigEnum.RPC_CONFIG_PATH.getPropertyValue());
         String zookeeperAddress = properties.getProperty(RpcConfigEnum.ZK_ADDRESS.getPropertyValue()) != null ? properties.getProperty(RpcConfigEnum.ZK_ADDRESS.getPropertyValue()) : DEFAULT_ZOOKEEPER_ADDRESS;

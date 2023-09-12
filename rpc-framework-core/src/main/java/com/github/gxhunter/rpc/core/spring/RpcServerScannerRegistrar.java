@@ -11,8 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
 import java.net.InetAddress;
@@ -40,7 +43,10 @@ public class RpcServerScannerRegistrar extends AbstractImportBeanDefinitionRegis
 
     @SneakyThrows
     @Override
-    public void onStartImport(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry) {
+    public void onStartImport(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry, String[] basePackages) {
+        ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry,false,environment);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(Component.class));
+        scanner.scan(basePackages);
         String serverName = Optional.ofNullable(annotationMetadata.getAnnotationAttributes(getImportBeanAnnotation().getName()))
                 .map(AnnotationAttributes::fromMap)
                 .map(attributes -> attributes.getString("serverName"))

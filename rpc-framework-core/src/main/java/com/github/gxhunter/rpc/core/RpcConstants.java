@@ -27,6 +27,7 @@ public class RpcConstants {
     public static final int HEAD_LENGTH = 16;
     public static final String PING = "ping";
     public static final String PONG = "pong";
+    public static final String BASE_PACKAGE_ATTRIBUTE_NAME = "basePackages";
     /**
      * 最大传输数据8MB
      */

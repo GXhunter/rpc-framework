@@ -13,12 +13,13 @@ import java.lang.annotation.*;
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Import(RpcClientScannerRegistrar.class)
+@Import({RpcClientScannerRegistrar.class})
+
 @Documented
 public @interface EnableRpcClients {
     /**
      * @return 扫描包
      */
-    String[] basePackage() default {};
+    String[] basePackages() default {};
 
 }
