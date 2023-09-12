@@ -244,19 +244,25 @@ docker run -d --name zookeeper -p 2181:2181 zookeeper:3.5.8
     
     import com.github.gxhunter.rpc.core.annotation.EnableRpcServices;
     import com.github.gxhunter.rpc.core.server.IRpcServer;
+    import com.github.gxhunter.rpc.core.server.NettyRpcServer;
     import org.springframework.boot.SpringApplication;
     import org.springframework.boot.autoconfigure.SpringBootApplication;
+    import org.springframework.context.annotation.Bean;
     
     @SpringBootApplication
     //指定服务名
     @EnableRpcServices(serverName = "RServer")
     public class RpcServerApplication {
-    
+    	@Bean
+    	public IRpcServer rpcServer() {
+    		return new NettyRpcServer();
+    	}
     	public static void main(String[] args) {
     		SpringApplication.run(RpcServerApplication.class, args).getBean(IRpcServer.class).start();
     	}
     
     }
+    
     ```
 
     
