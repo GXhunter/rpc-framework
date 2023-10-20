@@ -1,17 +1,5 @@
 # rpc-framework
 
-
-
-## 前言
-
-RPC 的原理实际不难，但是，自己在实现的过程中自己也遇到了很多问题。项目目前只实现了 RPC 框架最基本的功能，有兴趣的小伙伴可以自行完善。
-
-通过这个简易的轮子，你可以学到 RPC 的底层原理和原理以及各种 Java 编码实践的运用。
-
-你甚至可以把 [rpc-framework](https://github.com/GXhunter/rpc-framework) 当做你的毕设/项目经验的选择，这是非常不错！对比其他求职者的项目经验都是各种系统，造轮子肯定是更加能赢得面试官的青睐。
-
-如果你要将 [rpc-framework](https://github.com/GXhunter/rpc-framework) 当做你的毕设/项目经验的话，我希望你一定要搞懂，而不是直接复制粘贴我的思想。你可以 fork 我的项目，然后进行优化。如果你觉得的优化是有价值的话，你可以提交 PR 给我，我会尽快处理。
-
 ## 介绍
 
 [rpc-framework](https://github.com/GXhunter/rpc-framework) 是一款基于 Netty+Kyro+Zookeeper 实现的 RPC 框架。代码注释详细，结构清晰，非常适合阅读和学习。

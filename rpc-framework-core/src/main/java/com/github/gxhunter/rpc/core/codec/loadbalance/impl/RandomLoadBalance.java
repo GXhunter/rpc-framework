@@ -1,7 +1,6 @@
 package com.github.gxhunter.rpc.core.codec.loadbalance.impl;
 
 import com.github.gxhunter.rpc.core.codec.loadbalance.LoadBalance;
-import com.github.gxhunter.rpc.core.dto.RpcRequest;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -14,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class RandomLoadBalance implements LoadBalance {
     @Override
-    public String choose(List<String> serviceAddresses, RpcRequest rpcRequest) {
+    public String choose(List<String> serviceAddresses) {
         if (serviceAddresses==null||serviceAddresses.isEmpty()) {
             return null;
         }

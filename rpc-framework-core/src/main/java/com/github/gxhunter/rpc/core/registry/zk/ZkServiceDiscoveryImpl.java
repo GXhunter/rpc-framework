@@ -5,7 +5,6 @@ import com.github.gxhunter.rpc.common.exception.RpcException;
 import com.github.gxhunter.rpc.common.extension.SPIFactory;
 import com.github.gxhunter.rpc.common.factory.SingletonFactory;
 import com.github.gxhunter.rpc.core.codec.loadbalance.LoadBalance;
-import com.github.gxhunter.rpc.core.dto.RpcRequest;
 import com.github.gxhunter.rpc.core.registry.ServiceDiscovery;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,21 +17,20 @@ import java.util.List;
 @Slf4j
 public class ZkServiceDiscoveryImpl implements ServiceDiscovery {
     private final LoadBalance loadBalance;
-
+    private final ZookeeperOperator zookeeperOperator;
     public ZkServiceDiscoveryImpl() {
         this.loadBalance = SPIFactory.getImplement(LoadBalance.class);
+        this.zookeeperOperator = SingletonFactory.getInstance(ZookeeperOperator.class);
     }
 
     @Override
-    public InetSocketAddress lookupService(RpcRequest rpcRequest) {
-        String rpcServiceName = rpcRequest.getRpcServerName();
-        ZookeeperOperator zookeeperOperator = SingletonFactory.getInstance(ZookeeperOperator.class);
-        List<String> serviceUrlList = zookeeperOperator.getChildrenNodes(rpcServiceName);
+    public InetSocketAddress lookupService(String serverName) {
+        List<String> serviceUrlList = zookeeperOperator.getChildrenNodes(serverName);
         if (serviceUrlList == null || serviceUrlList.isEmpty()) {
-            throw new RpcException(RpcErrorMessageEnum.SERVICE_CAN_NOT_BE_FOUND, rpcServiceName);
+            throw new RpcException(RpcErrorMessageEnum.SERVICE_CAN_NOT_BE_FOUND, serverName);
         }
         // load balancing
-        String targetServiceUrl = loadBalance.choose(serviceUrlList, rpcRequest);
+        String targetServiceUrl = loadBalance.choose(serviceUrlList);
         log.info("Successfully found the service address:[{}]", targetServiceUrl);
         String[] socketAddressArray = targetServiceUrl.split(":");
         String host = socketAddressArray[0];

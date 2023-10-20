@@ -38,7 +38,7 @@ public final class ZookeeperOperator {
 
     static {
         Properties properties = PropertiesFileUtil.readPropertiesFile(RpcConfigEnum.RPC_CONFIG_PATH.getPropertyValue());
-        DEFAULT_ZOOKEEPER_ADDRESS = properties.getProperty("rpc.zookeeper.address");
+        DEFAULT_ZOOKEEPER_ADDRESS = properties.getProperty(RpcConfigEnum.ZK_ADDRESS.getPropertyValue());
     }
 
     public ZookeeperOperator() {

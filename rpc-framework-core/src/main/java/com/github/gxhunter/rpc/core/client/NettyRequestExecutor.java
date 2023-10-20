@@ -87,7 +87,7 @@ public final class NettyRequestExecutor implements RpcRequestExecutor, AutoClose
     @Override
     public CompletableFuture<RpcResponse<Object>> sendRequest(RpcRequest rpcRequest) {
         CompletableFuture<RpcResponse<Object>> resultFuture = new CompletableFuture<>();
-        InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest);
+        InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getRpcServerName());
         Channel channel = getChannel(inetSocketAddress);
         if (channel.isActive()) {
             // 放置未处理的请求

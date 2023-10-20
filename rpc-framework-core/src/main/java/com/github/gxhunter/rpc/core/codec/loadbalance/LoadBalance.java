@@ -1,7 +1,6 @@
 package com.github.gxhunter.rpc.core.codec.loadbalance;
 
 import com.github.gxhunter.rpc.common.extension.SPI;
-import com.github.gxhunter.rpc.core.dto.RpcRequest;
 
 import java.util.List;
 
@@ -17,8 +16,7 @@ public interface LoadBalance {
      * Choose one from the list of existing service addresses list
      *
      * @param serviceUrlList Service address list
-     * @param rpcRequest
      * @return target service address
      */
-    String choose(List<String> serviceUrlList, RpcRequest rpcRequest);
+    String choose(List<String> serviceUrlList);
 }
